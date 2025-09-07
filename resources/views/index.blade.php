@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ config('app.name', 'Laravel') }}</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.bunny.net">
+  <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+
+  @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+  @endif
+
+  <style>
+    :root{
+      --bg:#0b1120;
+      --panel:#0f172a;
+      --muted:#94a3b8;
+      --line:#1f2937;
+      --neon:#39ff14;
+      --neon-weak:#34d399;
+    }
+    html,body{height:100%}
+    body.compact{
+      background:linear-gradient(180deg,#0a0f1f 0%, #0b1120 40%, #0a1022 100%);
+      color:#e5e7eb;
+      font-family:"Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
+      letter-spacing:.01em;
+    }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace }
+    .neon{ color:var(--neon); text-shadow:0 0 6px rgba(57,255,20,.35) }
+    .neon-soft{ color:var(--neon-weak) }
+    .divider{ border-top:1px solid #111827 }
+    .muted{ color:var(--muted) }
+
+    /* Navbar estilo terminal */
+    .nav-dark{ background:#111827 }
+    .nav-btn{
+      display:inline-flex; align-items:center; gap:.45rem;
+      padding:.35rem .65rem; border:1px solid #16a34a; border-radius:.4rem;
+      background:#39ff14; color:#041408; font-weight:600;
+      text-decoration: none;
+    }
+    .nav-link-muted{
+      display:inline-flex; align-items:center; gap:.45rem;
+      color:#e5e7eb; text-decoration:none; font-weight:500;
+      padding:.35rem .45rem; border-radius:.35rem;
+    }
+    .nav-link-muted:hover{ background:#0f172a }
+
+    /* Busca */
+    .search-wrap{ position:relative }
+    .search-wrap svg{ position:absolute; left:.6rem; top:50%; transform:translateY(-50%); color:#6b7280 }
+    .search{
+      width:100%; border-radius:.4rem; border:1px solid #253047; background:#0a1226; color:#e5e7eb;
+      padding:.6rem .8rem .6rem 2.0rem; outline:none; font-size:.95rem;
+    }
+    .search::placeholder{ color:#6b7280 }
+
+    /* transições suaves + cursor verde */
+.search{
+  transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+  caret-color: var(--neon); /* cursor de texto verde */
+}
+
+/* quando o input recebe foco */
+.search:focus{
+  border-color:#16a34a;                 /* borda verde */
+  box-shadow:0 0 0 3px rgba(57,255,20,.25); /* “glow” verde */
+  background:#0b152a;                   /* levemente mais claro ao focar (opcional) */
+}
+
+/* placeholder fica mais esverdeado no foco (opcional) */
+.search:focus::placeholder{
+  color:#34d399;
+}
+
+/* quando QUALQUER elemento dentro do wrapper tem foco, pinte o ícone também */
+.search-wrap:focus-within svg{
+  color:var(--neon);
+  filter:drop-shadow(0 0 4px rgba(57,255,20,.35));
+}
+
+/* cor da seleção de texto dentro do input (opcional) */
+.search::selection{ background:rgba(57,255,20,.25); color:#fff; }
+.search::-moz-selection{ background:rgba(57,255,20,.25); color:#fff; }
+
+
+    /* Lista dicionário (bem compacta) */
+    .list-group .list-group-item{
+      background:#0f172a; border:1px solid var(--line);
+      border-radius:.5rem; padding:.6rem .7rem;
+    }
+    .list-group .list-group-item + .list-group-item{ margin-top:.55rem }
+    .list-actions{ display:flex; gap:.25rem }
+    .icon-btn{
+      display:inline-grid; place-items:center; width:26px; height:26px;
+      border-radius:.4rem; border:1px solid #233046; color:#93a2c3; background:#0d1427;
+    }
+    .icon-btn:hover{ color:#cfe0ff; border-color:#2b3c5b; background:#111b33 }
+    .chip{
+      display:inline-flex; align-items:center; gap:.25rem;
+      padding:.12rem .38rem; border-radius:999px; font-size:.66rem; font-weight:700;
+      background:#0b152a; border:1px solid #22314a; color:#c7d2fe; line-height:1.1;
+    }
+    .chip--brand{ color:#a5b4fc }
+    .chip--proto{ color:#86efac; border-color:#1f3b2a; background:#0b1a12 }
+    .chip--mpls{ color:#93c5fd; border-color:#23324a; background:#0c1628 }
+
+    .list-title{ font:700 .98rem/1.2 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono"; margin:.2rem 0 .35rem }
+    .kbd{
+      display:flex; align-items:center; justify-content:center; gap:.5rem;
+      padding:.45rem .7rem; border:1px solid #22314a; background:#0a1226;
+      border-radius:.4rem; font-weight:700; color:#cfe0ff; width:100%;
+    }
+    .dict-dl dt{ color:var(--muted); font-size:.9rem }
+    .dict-dl dd{ margin-bottom:.2rem; font-size:.92rem }
+    .dict-dl dd:last-of-type{ margin-bottom:0 }
+
+    /* Headings/hero compactos */
+    .hero-title{ font:800 2rem/1.1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono"; }
+    .hero-sub{ margin:0; font-size:1rem }
+    .hero-row{ align-items:center }
+    @media (min-width: 992px){
+      .hero-title{ font-size:2.2rem }
+    }
+  </style>
+</head>
+
+<body class="compact">
+
+ @include('reuse.header')
+ @include('reuse.viewNovoComando')
+
+
+  <!-- HERO / TÍTULO + AÇÃO -->
+  <section class="container-xxl py-3">
+    <div class="row hero-row">
+      <div class="col-lg-9 text-center text-lg-start mb-2 mb-lg-0">
+        <h1 class="hero-title neon mb-2">Busca de Comandos</h1>
+        <p class="hero-sub muted">Consulte comandos para equipamentos Cisco, Huawei e Datacom</p>
+      </div>
+      <div class="col-lg-3 d-flex justify-content-center justify-content-lg-end">
+        <a class="nav-btn"
+   data-bs-toggle="collapse"
+   href="#formNovoComando"
+   role="button"
+   aria-expanded="false"
+   aria-controls="formNovoComando">
+  <svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"/></svg>
+  Novo Comando
+</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUSCA + STATS (dinâmico) -->
+<section class="container-xxl">
+  <form method="GET" action="{{ route('comandos') }}" class="search-wrap mx-auto" style="max-width:720px;">
+    <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M10 18a8 8 0 1 1 6.32-3.1l4.39 4.39l-1.41 1.41l-4.39-4.39A7.96 7.96 0 0 1 10 18m0-2a6 6 0 1 0 0-12a6 6 0 0 0 0 12"/></svg>
+    <input class="search"
+           type="text"
+           name="q"
+           value="{{ request('q') }}"
+           placeholder="Buscar comandos, dispositivos, protocolos..."
+           aria-label="Buscar comandos">
+  </form>
+
+  <div class="d-flex justify-content-center gap-4 muted mono py-2">
+    <span>Total: <strong class="neon-soft">{{ $stats['total'] }}</strong> comandos</span>
+    <span>Resultados: <strong class="neon-soft">{{ $stats['results'] }}</strong></span>
+    <span>Favoritos: <strong class="neon-soft">{{ $stats['favorites'] }}</strong></span>
+  </div>
+</section>
+
+
+  <!-- LISTA (dicionário compacto) dinâmica -->
+<main class="container-xxl pb-4">
+  <section class="list-group">
+    @forelse($commands as $cmd)
+      <div class="list-group-item">
+        <div class="d-flex justify-content-between align-items-start">
+          <span class="chip chip--brand mono">{{ $cmd->vendor }}</span>
+          <div class="list-actions">
+            <button class="icon-btn" title="Editar">@svgEdit</button>
+            <button class="icon-btn" title="Anexos">@svgPaperclip</button>
+            <button class="icon-btn" title="Fixar">@svgPin</button>
+            <button class="icon-btn" title="Excluir">@svgTrash</button>
+          </div>
+        </div>
+
+        <h3 class="list-title neon">{{ $cmd->command }}</h3>
+
+        <dl class="row dict-dl mb-0">
+          <dt class="col-4 col-sm-3">Protocolo</dt>
+          <dd class="col-8 col-sm-9">
+            @if($cmd->protocol)
+              <span class="chip {{ strtoupper($cmd->protocol) === 'MPLS' ? 'chip--mpls' : 'chip--proto' }}">
+                {{ $cmd->protocol }}
+              </span>
+            @else
+              <span class="muted">—</span>
+            @endif
+          </dd>
+
+          <dt class="col-4 col-sm-3">Tarefa</dt>
+          <dd class="col-8 col-sm-9 text-white fw-semibold">
+            {{ $cmd->task ?? '—' }}
+          </dd>
+
+          <dt class="col-4 col-sm-3">Descrição</dt>
+          <dd class="col-8 col-sm-9 muted">
+            {{ $cmd->description ?? '—' }}
+          </dd>
+        </dl>
+
+        <div class="mt-2">
+          <button class="kbd" data-copy="{{ $cmd->command }}">
+            <span class="d-inline-flex align-items-center gap-2">
+              Copiar Comando
+            </span>
+          </button>
+        </div>
+      </div>
+    @empty
+      <div class="text-center muted py-4">Nenhum comando cadastrado.</div>
+    @endforelse
+  </section>
+
+  {{-- Paginação (opcional) --}}
+  @if(method_exists($commands, 'links'))
+    <div class="mt-3">
+      {{ $commands->withQueryString()->links() }}
+    </div>
+  @endif
+</main>
+
+
+  <!-- Inline SVG templates -->
+  <template id="tpl-edit">
+    <svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="m5 21l5.5-1.5L19 11l-4-4L6.5 15.5zM20.7 9.3a1 1 0 0 0 0-1.4L16.1 3.3a1 1 0 0 0-1.4 0L13 5l4 4z"/></svg>
+  </template>
+  <template id="tpl-clip">
+    <svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 6.5v11a4.5 4.5 0 1 1-9 0v-10a3 3 0 1 1 6 0v9a1.5 1.5 0 1 1-3 0V7h2v9a.5.5 0 1 0 1 0v-9a3.5 3.5 0 1 0-7 0v10a5.5 5.5 0 1 0 11 0v-11z"/></svg>
+  </template>
+  <template id="tpl-pin">
+    <svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M22 12h-6l2-7h-4l-1-3l-1 3H8l2 7H4l6 6v4l2-2v-2z"/></svg>
+  </template>
+  <template id="tpl-paperclip">
+    <svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M7 17a4 4 0 0 0 6.83 2.83l6.36-6.36a5 5 0 1 0-7.07-7.07L5.64 13.88a3 3 0 1 0 4.24 4.24l6-6"/></svg>
+  </template>
+  <template id="tpl-trash">
+    <svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M9 3h6l1 2h4v2H4V5h4zm1 6h2v8h-2zm4 0h2v8h-2zM6 7h12l-1 13a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2z"/></svg>
+  </template>
+
+  <script>
+    // Injetar os SVGs
+    (function hydrateIcons(){
+      const map = {
+        '@svgEdit': document.querySelector('#tpl-edit')?.innerHTML || '',
+        '@svgClipboard': document.querySelector('#tpl-clip')?.innerHTML || '',
+        '@svgPin': document.querySelector('#tpl-pin')?.innerHTML || '',
+        '@svgPaperclip': document.querySelector('#tpl-paperclip')?.innerHTML || '',
+        '@svgTrash': document.querySelector('#tpl-trash')?.innerHTML || ''
+      };
+      document.querySelectorAll('button, a, span').forEach(el=>{
+        const html = el.innerHTML.trim();
+        if(map[html]) el.innerHTML = map[html];
+      });
+    })();
+
+    // Copiar comando + feedback
+    document.querySelectorAll('[data-copy]').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const text = btn.getAttribute('data-copy') || '';
+        try{
+          await navigator.clipboard.writeText(text);
+          const original = btn.innerHTML;
+          btn.innerHTML = '<span style="display:flex;gap:.4rem;align-items:center"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>Copiado!</span>';
+          setTimeout(()=> btn.innerHTML = original, 1500);
+        }catch(e){
+          alert('Não foi possível copiar.'); console.error(e);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

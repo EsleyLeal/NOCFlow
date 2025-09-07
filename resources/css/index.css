@@ -1,0 +1,113 @@
+:root{
+      --bg:#0b1120;
+      --panel:#0f172a;
+      --muted:#94a3b8;
+      --line:#1f2937;
+      --neon:#39ff14;
+      --neon-weak:#34d399;
+    }
+    html,body{height:100%}
+    body.compact{
+      background:linear-gradient(180deg,#0a0f1f 0%, #0b1120 40%, #0a1022 100%);
+      color:#e5e7eb;
+      font-family:"Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
+      letter-spacing:.01em;
+    }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace }
+    .neon{ color:var(--neon); text-shadow:0 0 6px rgba(57,255,20,.35) }
+    .neon-soft{ color:var(--neon-weak) }
+    .divider{ border-top:1px solid #111827 }
+    .muted{ color:var(--muted) }
+
+    /* Navbar estilo terminal */
+    .nav-dark{ background:#111827 }
+    .nav-btn{
+      display:inline-flex; align-items:center; gap:.45rem;
+      padding:.35rem .65rem; border:1px solid #16a34a; border-radius:.4rem;
+      background:#39ff14; color:#041408; font-weight:600;
+      text-decoration: none;
+    }
+    .nav-link-muted{
+      display:inline-flex; align-items:center; gap:.45rem;
+      color:#e5e7eb; text-decoration:none; font-weight:500;
+      padding:.35rem .45rem; border-radius:.35rem;
+    }
+    .nav-link-muted:hover{ background:#0f172a }
+
+    /* Busca */
+    .search-wrap{ position:relative }
+    .search-wrap svg{ position:absolute; left:.6rem; top:50%; transform:translateY(-50%); color:#6b7280 }
+    .search{
+      width:100%; border-radius:.4rem; border:1px solid #253047; background:#0a1226; color:#e5e7eb;
+      padding:.6rem .8rem .6rem 2.0rem; outline:none; font-size:.95rem;
+    }
+    .search::placeholder{ color:#6b7280 }
+
+    /* transições suaves + cursor verde */
+.search{
+  transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+  caret-color: var(--neon); /* cursor de texto verde */
+}
+
+/* quando o input recebe foco */
+.search:focus{
+  border-color:#16a34a;                 /* borda verde */
+  box-shadow:0 0 0 3px rgba(57,255,20,.25); /* “glow” verde */
+  background:#0b152a;                   /* levemente mais claro ao focar (opcional) */
+}
+
+/* placeholder fica mais esverdeado no foco (opcional) */
+.search:focus::placeholder{
+  color:#34d399;
+}
+
+/* quando QUALQUER elemento dentro do wrapper tem foco, pinte o ícone também */
+.search-wrap:focus-within svg{
+  color:var(--neon);
+  filter:drop-shadow(0 0 4px rgba(57,255,20,.35));
+}
+
+/* cor da seleção de texto dentro do input (opcional) */
+.search::selection{ background:rgba(57,255,20,.25); color:#fff; }
+.search::-moz-selection{ background:rgba(57,255,20,.25); color:#fff; }
+
+
+    /* Lista dicionário (bem compacta) */
+    .list-group .list-group-item{
+      background:#0f172a; border:1px solid var(--line);
+      border-radius:.5rem; padding:.6rem .7rem;
+    }
+    .list-group .list-group-item + .list-group-item{ margin-top:.55rem }
+    .list-actions{ display:flex; gap:.25rem }
+    .icon-btn{
+      display:inline-grid; place-items:center; width:26px; height:26px;
+      border-radius:.4rem; border:1px solid #233046; color:#93a2c3; background:#0d1427;
+    }
+    .icon-btn:hover{ color:#cfe0ff; border-color:#2b3c5b; background:#111b33 }
+    .chip{
+      display:inline-flex; align-items:center; gap:.25rem;
+      padding:.12rem .38rem; border-radius:999px; font-size:.66rem; font-weight:700;
+      background:#0b152a; border:1px solid #22314a; color:#c7d2fe; line-height:1.1;
+    }
+    .chip--brand{ color:#a5b4fc }
+    .chip--proto{ color:#86efac; border-color:#1f3b2a; background:#0b1a12 }
+    .chip--mpls{ color:#93c5fd; border-color:#23324a; background:#0c1628 }
+
+    .list-title{ font:700 .98rem/1.2 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono"; margin:.2rem 0 .35rem }
+    .kbd{
+      display:flex; align-items:center; justify-content:center; gap:.5rem;
+      padding:.45rem .7rem; border:1px solid #22314a; background:#0a1226;
+      border-radius:.4rem; font-weight:700; color:#cfe0ff; width:100%;
+    }
+    .dict-dl dt{ color:var(--muted); font-size:.9rem }
+    .dict-dl dd{ margin-bottom:.2rem; font-size:.92rem }
+    .dict-dl dd:last-of-type{ margin-bottom:0 }
+
+    /* Headings/hero compactos */
+    .hero-title{ font:800 2rem/1.1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono"; }
+    .hero-sub{ margin:0; font-size:1rem }
+    .hero-row{ align-items:center }
+    @media (min-width: 992px){
+      .hero-title{ font-size:2.2rem }
+    }
+
