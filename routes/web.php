@@ -8,9 +8,13 @@ use App\Http\Controllers\TroubleshootingController;
 Route::get('/', [CommandController::class, 'index'])->name('comandos');
 Route::get('/troubleshooting', [TroubleshootingController::class, 'page'])->name('troubleshooting');
 
-// Páginas estáticas (se usar)
+// (opcional) se ainda usa páginas separadas:
 Route::view('/novoComando', 'novoComando')->name('novoComando');
 Route::view('/novoTroubleshooting', 'novoTroubleshooting')->name('novoTroubleshooting');
+
+// POSTs reais (deixam de ser placeholders)
+Route::post('/comandos', [CommandController::class, 'store'])->name('comandos.store');
+Route::post('/troubleshooting', [TroubleshootingController::class, 'store'])->name('troubleshooting.store');
 
 // Ações (SEM auth)
 Route::post('/comandos', [CommandController::class, 'store'])->name('comandos.store');
