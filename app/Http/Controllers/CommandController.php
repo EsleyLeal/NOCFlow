@@ -4,25 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\Command;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema; // pra checar se a coluna existe
+use Illuminate\Support\Facades\Schema;
 
 class CommandController extends Controller
 {
-    /**
-     * LISTAGEM + FILTROS/ORDENAÇÃO
-     */
     public function index(Request $request)
     {
-        // parâmetros de query
         $term       = trim($request->query('q', ''));
         $vendors    = (array) $request->query('vendor', []);
         $protocols  = (array) $request->query('protocol', []);
-        $onlyFav    = (bool) $request->boolean('favorites');
+        $onlyFav    = (bool) $request->boolean('favorites'); // funciona sem login
         $sort       = $request->query('sort', 'recent');
 
         $query = Command::query();
 
-        // busca textual
+        // busca
         if ($term !== '') {
             $like = "%{$term}%";
             $query->where(function ($w) use ($like) {
@@ -38,7 +34,7 @@ class CommandController extends Controller
         if (!empty($vendors))   { $query->whereIn('vendor', $vendors); }
         if (!empty($protocols)) { $query->whereIn('protocol', $protocols); }
 
-        // só favoritos (se a coluna existir)
+        // só favoritos (coluna booleana)
         if ($onlyFav && Schema::hasColumn('commands', 'favorite')) {
             $query->where('favorite', true);
         }
@@ -50,15 +46,14 @@ class CommandController extends Controller
                     $query->orderByDesc('usage_count');
                     break;
                 }
-                // se não existir a coluna, cai no "recent"
-                // no break aqui de propósito
+                // fallback -> recent
             case 'az':
                 $query->orderBy('command');
                 break;
             case 'vendor':
                 $query->orderBy('vendor')->orderBy('command');
                 break;
-            default: // recent
+            default:
                 $query->latest();
         }
 
@@ -73,6 +68,7 @@ class CommandController extends Controller
                 : 0,
         ];
 
+        // a view já usa $cmd->favorite para pintar a estrela
         return view('index', [
             'commands' => $commands,
             'stats'    => $stats,
@@ -80,13 +76,10 @@ class CommandController extends Controller
         ]);
     }
 
-    /**
-     * CRIAÇÃO DE COMANDO (seu form usa "device" = vendor)
-     */
     public function store(Request $request)
     {
         $data = $request->validate([
-            'device'      => ['required','string','max:100'],  // Cisco/Huawei/Datacom...
+            'device'      => ['required','string','max:100'],
             'protocol'    => ['nullable','string','max:50'],
             'task'        => ['nullable','string','max:255'],
             'command'     => ['required','string'],
@@ -101,26 +94,20 @@ class CommandController extends Controller
             'description' => $data['description'] ?? null,
         ];
 
-        // valores padrão se as colunas existirem
-        if (Schema::hasColumn('commands', 'favorite')) {
-            $payload['favorite'] = false;
-        }
-        if (Schema::hasColumn('commands', 'usage_count')) {
-            $payload['usage_count'] = 0;
-        }
+        if (Schema::hasColumn('commands', 'favorite'))    $payload['favorite'] = false;
+        if (Schema::hasColumn('commands', 'usage_count')) $payload['usage_count'] = 0;
 
         Command::create($payload);
 
         return back()->with('success', 'Comando adicionado!');
     }
 
-    /**
-     * TOGGLE FAVORITE (coluna booleana "favorite")
-     * Endpoint para AJAX: POST /comandos/{command}/favorite
-     */
-    public function toggleFavorite(Command $command)
+    // -------- Favorito (coluna booleana) --------
+    public function toggleFavorite(Request $request, Command $command)
     {
-        abort_unless(Schema::hasColumn('commands', 'favorite'), 404, 'Coluna favorite não existe na tabela commands.');
+        if (!Schema::hasColumn('commands', 'favorite')) {
+            return response()->json(['ok'=>false, 'error'=>'Coluna favorite ausente.'], 422);
+        }
 
         $command->favorite = ! (bool) $command->favorite;
         $command->save();
@@ -131,11 +118,8 @@ class CommandController extends Controller
         ]);
     }
 
-    /**
-     * INCREMENT USAGE (coluna "usage_count")
-     * Endpoint para AJAX: POST /comandos/{command}/used
-     */
-    public function incrementUsage(Command $command)
+    // -------- Contador de uso --------
+    public function incrementUsage(Request $request, Command $command)
     {
         if (Schema::hasColumn('commands', 'usage_count')) {
             $command->increment('usage_count');

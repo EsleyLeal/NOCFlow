@@ -38,7 +38,6 @@
     .divider{ border-top:1px solid #111827 }
     .muted{ color:var(--muted) }
 
-    /* Navbar estilo terminal */
     .nav-dark{ background:#111827 }
     .nav-btn{
       display:inline-flex; align-items:center; gap:.45rem;
@@ -53,7 +52,6 @@
     }
     .nav-link-muted:hover{ background:#0f172a }
 
-    /* Busca */
     .search-wrap{ position:relative }
     .search-wrap svg{ position:absolute; left:.6rem; top:50%; transform:translateY(-50%); color:#6b7280 }
     .search{
@@ -76,7 +74,6 @@
     .search::selection{ background:rgba(57,255,20,.25); color:#fff; }
     .search::-moz-selection{ background:rgba(57,255,20,.25); color:#fff; }
 
-    /* Lista dicionário (bem compacta) */
     .list-group .list-group-item{
       background:#0f172a; border:1px solid var(--line);
       border-radius:.5rem; padding:.6rem .7rem;
@@ -96,7 +93,7 @@
     .chip--brand{ color:#a5b4fc }
     .chip--proto{ color:#86efac; border-color:#1f3b2a; background:#0b1a12 }
     .chip--mpls{ color:#93c5fd; border-color:#23324a; background:#0c1628 }
-    .list-title{ font:700 .98rem/1.2 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono"; margin:.2rem 0 .35rem }
+    .list-title{ font:700 .98rem/1.2 ui-monospace; margin:.2rem 0 .35rem }
     .kbd{
       display:flex; align-items:center; justify-content:center; gap:.5rem;
       padding:.45rem .7rem; border:1px solid #22314a; background:#0a1226;
@@ -106,15 +103,13 @@
     .dict-dl dd{ margin-bottom:.2rem; font-size:.92rem }
     .dict-dl dd:last-of-type{ margin-bottom:0 }
 
-    /* Headings/hero compactos */
-    .hero-title{ font:800 2rem/1.1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono"; }
+    .hero-title{ font:800 2rem/1.1 ui-monospace; }
     .hero-sub{ margin:0; font-size:1rem }
     .hero-row{ align-items:center }
     @media (min-width: 992px){
       .hero-title{ font-size:2.2rem }
     }
 
-    /* filtros + estrelas */
     .filter-bar{ background:#0f172a; border:1px solid var(--line); border-radius:.5rem; padding:.6rem .8rem }
     .filter-chip{
       display:inline-flex; align-items:center; gap:.35rem; padding:.28rem .55rem; border:1px solid #22314a;
@@ -130,7 +125,6 @@
 
     .site-footer a{ text-decoration:none !important; border:0 !important }
 
-    /* highlight do termo buscado */
     mark.hl{
       background: rgba(57,255,20,.18);
       color:#fff;
@@ -145,7 +139,6 @@
  @include('reuse.header')
  @include('reuse.viewNovoComando')
 
-  <!-- HERO / TÍTULO + AÇÃO -->
   <section class="container-xxl py-3">
     <div class="row hero-row">
       <div class="col-lg-9 text-center text-lg-start mb-2 mb-lg-0">
@@ -153,12 +146,7 @@
         <p class="hero-sub muted">Consulte comandos para equipamentos Cisco, Huawei e Datacom</p>
       </div>
       <div class="col-lg-3 d-flex justify-content-center justify-content-lg-end">
-        <a class="nav-btn"
-           data-bs-toggle="collapse"
-           href="#formNovoComando"
-           role="button"
-           aria-expanded="false"
-           aria-controls="formNovoComando">
+        <a class="nav-btn" data-bs-toggle="collapse" href="#formNovoComando" role="button" aria-expanded="false" aria-controls="formNovoComando">
           <svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"/></svg>
           Novo Comando
         </a>
@@ -166,7 +154,6 @@
     </div>
   </section>
 
-  <!-- BUSCA + STATS -->
   <section class="container-xxl">
     <form method="GET" action="{{ route('comandos') }}" class="search-wrap mx-auto" style="max-width:720px;">
       <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M10 18a8 8 0 1 1 6.32-3.1l4.39 4.39l-1.41 1.41l-4.39-4.39A7.96 7.96 0 0 1 10 18m0-2a6 6 0 1 0 0-12a6 6 0 0 0 0 12"/></svg>
@@ -180,7 +167,6 @@
     </div>
   </section>
 
-  <!-- FILTROS / ORDENAR -->
   <section class="container-xxl pb-2">
     <form method="GET" action="{{ route('comandos') }}" class="filter-bar d-flex flex-wrap align-items-center gap-2">
       <input type="hidden" name="q" value="{{ request('q') }}">
@@ -213,6 +199,16 @@
         @endforeach
       </div>
 
+      {{-- >>> AQUI: Chip "Só favoritos" --}}
+      @php $onlyFav = request('favorites') == '1'; @endphp
+      <div class="d-flex align-items-center gap-2 ms-lg-3">
+        <label class="filter-chip {{ $onlyFav ? 'active' : '' }}">
+          <input type="checkbox" name="favorites" value="1" class="d-none" {{ $onlyFav ? 'checked' : '' }}>
+          MEUS FAVORITOS
+        </label>
+      </div>
+      {{-- <<< --}}
+
       @php $sort = request('sort','recent'); @endphp
       <div class="ms-auto">
         <select name="sort" class="form-select form-select-sm" style="background:#0a1226;color:#e5e7eb;border-color:#22314a;">
@@ -230,7 +226,6 @@
     </form>
   </section>
 
-  <!-- Helper p/ highlight -->
   @php
     $term = trim(request('q',''));
     $hl = function($text, $term){
@@ -241,7 +236,6 @@
     };
   @endphp
 
-  <!-- LISTA -->
   <main class="container-xxl pb-4">
     <section class="list-group">
       @forelse($commands as $cmd)
@@ -255,6 +249,7 @@
               @php $isFav = !empty($cmd->favorite) && $cmd->favorite; @endphp
               <button class="star-btn fav-btn {{ $isFav ? 'active' : '' }}"
                       data-id="{{ $cmd->id }}"
+                      data-url="{{ route('comandos.favorite', $cmd) }}"
                       aria-pressed="{{ $isFav ? 'true' : 'false' }}"
                       title="{{ $isFav ? 'Remover dos favoritos' : 'Adicionar aos favoritos' }}">
                 @svgStar
@@ -290,10 +285,9 @@
           </dl>
 
           <div class="mt-2">
-            <button class="kbd" data-copy="{{ $cmd->command }}">
-              <span class="d-inline-flex align-items-center gap-2">
-                Copiar Comando
-              </span>
+            <button class="kbd" data-copy="{{ $cmd->command }}"
+                    data-used-url="{{ route('comandos.used', $cmd) }}">
+              <span class="d-inline-flex align-items-center gap-2">Copiar Comando</span>
             </button>
           </div>
         </div>
@@ -334,7 +328,6 @@
   <script>
     const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-    // Injetar os SVGs
     (function hydrateIcons(){
       const map = {
         '@svgEdit': document.querySelector('#tpl-edit')?.innerHTML || '',
@@ -350,26 +343,45 @@
       });
     })();
 
-    /* Favoritar (AJAX) */
-    document.querySelectorAll('.fav-btn').forEach(btn=>{
-      btn.addEventListener('click', async ()=>{
-        const id = btn.getAttribute('data-id');
-        try{
-          const res = await fetch(`{{ url('/comandos') }}/${id}/favorite`, {
-            method:'POST',
-            headers:{ 'X-CSRF-TOKEN': csrf, 'Accept':'application/json' }
-          });
-          const data = await res.json();
-          if(data?.ok){
-            const on = !!data.favorited;
-            btn.classList.toggle('active', on);
-            btn.setAttribute('aria-pressed', on ? 'true':'false');
-          }
-        }catch(e){ console.error(e); }
-      });
+    // Delegação: FAVORITAR
+    document.addEventListener('click', async (ev)=>{
+      const btn = ev.target.closest('.fav-btn');
+      if(!btn) return;
+
+      ev.preventDefault();
+      const url = btn.dataset.url;
+      if(!url){ console.error('data-url ausente'); return; }
+
+      try{
+        const res = await fetch(url, {
+          method:'POST',
+          headers:{
+            'X-CSRF-TOKEN': csrf,
+            'Accept':'application/json',
+            'X-Requested-With':'XMLHttpRequest'
+          },
+          credentials:'same-origin'
+        });
+
+        if(!res.ok){
+          const txt = await res.text();
+          console.error('Erro ao favoritar:', res.status, txt);
+          alert('Não foi possível favoritar.');
+          return;
+        }
+
+        const data = await res.json();
+        const on = !!data.favorited;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true':'false');
+        btn.title = on ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
+      }catch(e){
+        console.error(e);
+        alert('Falha de rede ao favoritar.');
+      }
     });
 
-    /* Chips de filtro: toggle visual instantâneo */
+    // Chips de filtro: toggle visual instantâneo
     document.querySelectorAll('.filter-chip').forEach(chip=>{
       chip.addEventListener('click', (e)=>{
         const input = chip.querySelector('input[type=checkbox]');
@@ -381,30 +393,33 @@
       });
     });
 
-    // Copiar comando + feedback + incrementar uso
-    document.querySelectorAll('[data-copy]').forEach(btn=>{
-      btn.addEventListener('click', async ()=>{
-        const text = btn.getAttribute('data-copy') || '';
-        const card = btn.closest('.list-group-item');
-        const id = card?.querySelector('.fav-btn')?.getAttribute('data-id');
+    // Copiar + incrementar uso
+    document.addEventListener('click', async (ev)=>{
+      const btn = ev.target.closest('[data-copy]');
+      if(!btn) return;
 
-        try{
-          await navigator.clipboard.writeText(text);
-          const original = btn.innerHTML;
-          btn.innerHTML = '<span style="display:flex;gap:.4rem;align-items:center"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>Copiado!</span>';
-          setTimeout(()=> btn.innerHTML = original, 1500);
-        }catch(e){
-          alert('Não foi possível copiar.'); console.error(e);
-        }
+      const text = btn.getAttribute('data-copy') || '';
+      const usedUrl = btn.getAttribute('data-used-url');
 
-        // incrementa o uso (não bloqueia a UI)
-        if(id){
-          fetch(`{{ url('/comandos') }}/${id}/used`, {
-            method:'POST',
-            headers:{ 'X-CSRF-TOKEN': csrf }
-          }).catch(()=>{});
-        }
-      });
+      try{
+        await navigator.clipboard.writeText(text);
+        const original = btn.innerHTML;
+        btn.innerHTML = '<span style="display:flex;gap:.4rem;align-items:center"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>Copiado!</span>';
+        setTimeout(()=> btn.innerHTML = original, 1500);
+      }catch(e){
+        alert('Não foi possível copiar.'); console.error(e);
+      }
+
+      if(usedUrl){
+        fetch(usedUrl, {
+          method:'POST',
+          headers:{
+            'X-CSRF-TOKEN': csrf,
+            'X-Requested-With':'XMLHttpRequest'
+          },
+          credentials:'same-origin'
+        }).catch(()=>{});
+      }
     });
   </script>
 </body>

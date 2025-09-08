@@ -8,16 +8,11 @@ use App\Http\Controllers\TroubleshootingController;
 Route::get('/', [CommandController::class, 'index'])->name('comandos');
 Route::get('/troubleshooting', [TroubleshootingController::class, 'page'])->name('troubleshooting');
 
-// (opcional) se ainda usa páginas separadas:
+// Páginas estáticas (se usar)
 Route::view('/novoComando', 'novoComando')->name('novoComando');
 Route::view('/novoTroubleshooting', 'novoTroubleshooting')->name('novoTroubleshooting');
 
-// POSTs reais (deixam de ser placeholders)
+// Ações (SEM auth)
 Route::post('/comandos', [CommandController::class, 'store'])->name('comandos.store');
-Route::post('/troubleshooting', [TroubleshootingController::class, 'store'])->name('troubleshooting.store');
-
-Route::post('/comandos/{command}/favorite', [CommandController::class,'toggleFavorite'])
-  ->middleware('auth')->name('comandos.favorite');
-
-Route::post('/comandos/{command}/used', [CommandController::class,'incrementUsage'])
-  ->middleware('auth')->name('comandos.used');
+Route::post('/comandos/{command}/favorite', [CommandController::class,'toggleFavorite'])->name('comandos.favorite');
+Route::post('/comandos/{command}/used', [CommandController::class,'incrementUsage'])->name('comandos.used');
