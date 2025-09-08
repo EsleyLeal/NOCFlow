@@ -84,7 +84,7 @@
 </head>
 <body class="compact">
 
-    
+
 
   @include('reuse.header')
   @include('reuse.viewNovoTroubleshooting')
@@ -195,6 +195,8 @@
 
   </div>
 </main>
+
+ @include('reuse.footer')
 
   <script>
     // botão "copiar"

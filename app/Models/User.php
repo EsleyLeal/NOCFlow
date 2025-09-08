@@ -9,6 +9,11 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+
+    public function favoriteCommands(){
+  return $this->belongsToMany(\App\Models\Command::class, 'command_favorites')->withTimestamps();
+}
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 

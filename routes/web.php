@@ -16,3 +16,8 @@ Route::view('/novoTroubleshooting', 'novoTroubleshooting')->name('novoTroublesho
 Route::post('/comandos', [CommandController::class, 'store'])->name('comandos.store');
 Route::post('/troubleshooting', [TroubleshootingController::class, 'store'])->name('troubleshooting.store');
 
+Route::post('/comandos/{command}/favorite', [CommandController::class,'toggleFavorite'])
+  ->middleware('auth')->name('comandos.favorite');
+
+Route::post('/comandos/{command}/used', [CommandController::class,'incrementUsage'])
+  ->middleware('auth')->name('comandos.used');
