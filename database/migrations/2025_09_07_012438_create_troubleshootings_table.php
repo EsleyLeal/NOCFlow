@@ -13,12 +13,22 @@ return new class extends Migration
     {
         Schema::create('troubleshootings', function (Blueprint $table) {
             $table->id();
-            $table->string('title');                 // "Interface down", "Routing loop"
-            $table->string('description')->nullable();
-            $table->text('steps')->nullable();       // um passo por linha ou markdown
-            // (opcional) relacionar a fabricante/protocolo se quiser depois
-            // $table->string('vendor')->nullable();
-            // $table->string('protocol')->nullable();
+            $table->string('ticket_code')->nullable();       // Código do chamado
+            $table->string('client_name')->nullable();       // Nome do cliente
+            $table->string('troubleshoot_type')->nullable(); // Tipo de troubleshooting
+            $table->string('description')->nullable();       // Breve descrição
+
+            // === Novos campos fixos ===
+            $table->string('endereco')->nullable();
+            $table->string('bairro')->nullable();
+            $table->string('complemento')->nullable();
+            $table->string('cidade')->nullable();
+            $table->string('grupo')->nullable();   // Governo, Matriz, Corporativo
+            $table->string('uf', 2)->nullable();   // Ex: CE, SP, RJ
+
+            // Dinâmicos e passos
+            $table->json('details')->nullable();  // JSON dos detalhes adicionais
+            $table->text('steps')->nullable();    // Passos
             $table->timestamps();
         });
     }

@@ -20,3 +20,14 @@ Route::post('/troubleshooting', [TroubleshootingController::class, 'store'])->na
 Route::post('/comandos', [CommandController::class, 'store'])->name('comandos.store');
 Route::post('/comandos/{command}/favorite', [CommandController::class,'toggleFavorite'])->name('comandos.favorite');
 Route::post('/comandos/{command}/used', [CommandController::class,'incrementUsage'])->name('comandos.used');
+
+
+//Ação Update Editar
+
+Route::put('/troubleshooting/{troubleshooting}', [TroubleshootingController::class, 'update'])
+    ->name('troubleshooting.update');
+
+
+// Ação Delete
+
+Route::delete('/troubleshooting/{troubleshooting}', [TroubleshootingController::class, 'destroy']);

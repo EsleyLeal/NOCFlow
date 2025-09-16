@@ -80,6 +80,7 @@
 .nav-link-muted:hover{ background:#0f172a }
 .divider{ border-top:1px solid #111827 }
 
+
   </style>
 </head>
 <body class="compact">
@@ -138,6 +139,7 @@
 <main class="container-xxl pb-5">
   <div class="accordion accordion-dark" id="accTroubles">
 
+
     @forelse($items as $ts)
       @php
         // gera IDs únicos para o acordeão
@@ -150,43 +152,161 @@
       @endphp
 
       <div class="accordion-item">
-        <h2 class="accordion-header" id="{{ $hid }}">
-          <button class="accordion-button collapsed" type="button"
-                  data-bs-toggle="collapse" data-bs-target="#{{ $cid }}"
-                  aria-expanded="false" aria-controls="{{ $cid }}">
-            <span class="badge-chip">TS</span>
-            <div>
-              <div class="fw-bold" style="font-family:ui-monospace,Menlo,Consolas">
-                {{ $ts->title }}
-              </div>
-              @if($ts->description)
-                <small class="muted">{{ $ts->description }}</small>
-              @endif
-            </div>
-          </button>
-        </h2>
+  <!-- Cabeçalho do acordeão -->
+  <h2 class="accordion-header" id="{{ $hid }}">
+    <button class="accordion-button collapsed" type="button"
+            data-bs-toggle="collapse" data-bs-target="#{{ $cid }}"
+            aria-expanded="false" aria-controls="{{ $cid }}">
+      <span class="badge-chip">TS</span>
+      <div>
+        <div class="fw-bold" style="font-family:ui-monospace,Menlo,Consolas">
+          {{ strtoupper($ts->title) }}
+        </div>
+        @if($ts->description)
+          <small class="muted">{{ strtoupper($ts->client_name) }} - {{ strtoupper($ts->cidade) }}</small>
+        @endif
+      </div>
+    </button>
+  </h2>
 
-        <div id="{{ $cid }}" class="accordion-collapse collapse" aria-labelledby="{{ $hid }}" data-bs-parent="#accTroubles">
-          <div class="accordion-body">
-            @if(count($steps))
-              <ol class="mb-3 text-white">
-                @foreach($steps as $s)
-                  <li>{{ $s }}</li>
+  <div id="{{ $cid }}" class="accordion-collapse collapse" aria-labelledby="{{ $hid }}" data-bs-parent="#accTroubles">
+    <div class="accordion-body">
+
+      <!-- Botão Excluir -->
+      <div class="text-end mt-3">
+        <button class="btn btn-sm btn-danger btn-delete-ts" data-id="{{ $ts->id }}">
+          Excluir
+        </button>
+      </div>
+
+      <!-- Cadastro do Cliente -->
+      <h6 class="neon">Cadastro do Cliente</h6>
+      <div class="mb-3">
+        <table class="table table-sm table-dark table-bordered align-middle">
+          <tbody>
+            <tr>
+              <th style="width: 180px;">Código do Chamado</th>
+              <td class="editable" data-id="{{ $ts->id }}" data-field="ticket_code">
+                {{ $ts->ticket_code ? strtoupper($ts->ticket_code) : '-' }}
+              </td>
+            </tr>
+            <tr>
+              <th>Cliente</th>
+              <td class="editable" data-id="{{ $ts->id }}" data-field="client_name">
+                {{ $ts->client_name ? strtoupper($ts->client_name) : '-' }}
+              </td>
+            </tr>
+            <tr>
+              <th>Endereço</th>
+              <td class="editable" data-id="{{ $ts->id }}" data-field="endereco">
+                {{ $ts->endereco ? strtoupper($ts->endereco) : '-' }}
+              </td>
+            </tr>
+            <tr>
+              <th>Bairro</th>
+              <td class="editable" data-id="{{ $ts->id }}" data-field="bairro">
+                {{ $ts->bairro ? strtoupper($ts->bairro) : '-' }}
+              </td>
+            </tr>
+            <tr>
+              <th>Complemento</th>
+              <td class="editable" data-id="{{ $ts->id }}" data-field="complemento">
+                {{ $ts->complemento ? strtoupper($ts->complemento) : '-' }}
+              </td>
+            </tr>
+            <tr>
+              <th>Cidade</th>
+              <td class="editable" data-id="{{ $ts->id }}" data-field="cidade">
+                {{ $ts->cidade ? strtoupper($ts->cidade) : '-' }}
+              </td>
+            </tr>
+            <tr>
+              <th>Grupo</th>
+              <td class="editable" data-id="{{ $ts->id }}" data-field="grupo">
+                {{ $ts->grupo ? strtoupper($ts->grupo) : '-' }}
+              </td>
+            </tr>
+            <tr>
+              <th>UF</th>
+              <td class="editable" data-id="{{ $ts->id }}" data-field="uf">
+                {{ $ts->uf ? strtoupper($ts->uf) : '-' }}
+              </td>
+            </tr>
+            <tr>
+              <th>Relato</th>
+              <td class="editable" data-id="{{ $ts->id }}" data-field="description">
+                {{ $ts->description ? strtoupper($ts->description) : '-' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Informação de Circuito -->
+      @if($ts->details && count(json_decode($ts->details, true)) > 0)
+        <h6 class="neon">Informação de Circuito</h6>
+        <div class="table-responsive mb-3">
+          <table class="table table-sm table-dark table-striped table-bordered align-middle">
+            <thead>
+              <tr>
+                <th style="width: 120px;">Campo</th>
+                <th>Valor</th>
+                <th style="width: 160px;">Fabricante</th>
+                <th>Observações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach(json_decode($ts->details, true) as $key => $entries)
+                @foreach($entries as $entry)
+                  @php
+                    $value = is_array($entry) ? ($entry['value'] ?? '') : $entry;
+                    $vendor = is_array($entry) ? ($entry['vendor'] ?? '') : '';
+                    $notes  = is_array($entry) ? ($entry['notes'] ?? '') : '';
+
+                    // função inline pra detectar se tem link
+                    $hasLink = fn($txt) => Str::contains($txt, ['http://', 'https://']);
+                  @endphp
+
+                  @if(!empty($value) || !empty($vendor) || !empty($notes))
+                    <tr>
+                      <td class="fw-bold text-uppercase">{{ strtoupper($key) }}</td>
+                      <td class="editable-detail"
+                          data-id="{{ $ts->id }}"
+                          data-key="{{ $key }}"
+                          data-subfield="value">
+                        {!! $hasLink($value) ? $value : strtoupper($value) !!}
+                      </td>
+                      <td class="editable-detail"
+                          data-id="{{ $ts->id }}"
+                          data-key="{{ $key }}"
+                          data-subfield="vendor">
+                        {!! $vendor ? ($hasLink($vendor) ? $vendor : strtoupper($vendor)) : '-' !!}
+                      </td>
+                      <td class="editable-detail"
+                          data-id="{{ $ts->id }}"
+                          data-key="{{ $key }}"
+                          data-subfield="notes">
+                        {!! $notes ? ($hasLink($notes) ? $notes : strtoupper($notes)) : '-' !!}
+                      </td>
+                    </tr>
+                  @endif
                 @endforeach
-              </ol>
-            @else
-              <div class="muted">Sem passos cadastrados.</div>
-            @endif
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+      @endif
 
-            {{-- botão para copiar todos os passos como texto (opcional) --}}
-            @if(count($steps))
-              <button class="kbd-copy mt-2"
-                      data-copy="{{ implode("\n", $steps) }}">
-                <svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 6.5v11a4.5 4.5 0 1 1-9 0v-10a3 3 0 1 1 6 0v9a1.5 1.5 0 1 1-3 0V7h2v9a.5.5 0 1 0 1 0v-9a3.5 3.5 0 1 0-7 0v10a5.5 5.5 0 1 0 11 0v-11z"/></svg>
-                Copiar passos
-              </button>
-            @endif
-          </div>
+      <!-- Ocorrência -->
+      @if(!empty($ts->steps))
+        <h6 class="neon">Ocorrência</h6>
+        <div class="editable-steps text-white bg-dark p-3 rounded"
+             data-id="{{ $ts->id }}">
+          {!! nl2br(e(strtoupper($ts->steps))) !!}
+        </div>
+      @endif
+
+</div>
         </div>
       </div>
     @empty
@@ -199,17 +319,217 @@
  @include('reuse.footer')
 
   <script>
-    // botão "copiar"
-    document.querySelectorAll('.kbd-copy').forEach(btn=>{
-      btn.addEventListener('click', async ()=>{
-        try{
-          await navigator.clipboard.writeText(btn.getAttribute('data-copy')||'');
-          const html = btn.innerHTML;
-          btn.innerHTML = '<span style="display:flex;gap:.45rem;align-items:center"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>Copiado!</span>';
-          setTimeout(()=>btn.innerHTML = html, 1200);
-        }catch(e){ alert('Não foi possível copiar.'); }
-      });
+  // botão "copiar"
+  document.querySelectorAll('.kbd-copy').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      try{
+        await navigator.clipboard.writeText(btn.getAttribute('data-copy')||'');
+        const html = btn.innerHTML;
+        btn.innerHTML = '<span style="display:flex;gap:.45rem;align-items:center"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>Copiado!</span>';
+        setTimeout(()=>btn.innerHTML = html, 1200);
+      }catch(e){ alert('Não foi possível copiar.'); }
     });
-  </script>
+  });
+
+  // ==============================
+  // EDIÇÃO INLINE
+  // ==============================
+
+  // --- 1. Campos fixos (já funcionava)
+  document.querySelectorAll('.editable').forEach(cell => {
+    cell.addEventListener('dblclick', function () {
+      if (cell.querySelector('input')) return;
+
+      const original = cell.innerText.trim();
+      const field = cell.dataset.field;
+      const id = cell.dataset.id;
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = original !== '-' ? original : '';
+      input.className = 'form-control form-control-sm';
+
+      cell.innerHTML = '';
+      cell.appendChild(input);
+      input.focus();
+
+      input.addEventListener('blur', () => salvarAlteracao(cell, input.value, original, field, id));
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') input.blur(); });
+    });
+  });
+
+  // --- 2. Detalhes adicionais
+  document.querySelectorAll('.editable-detail').forEach(cell => {
+    cell.addEventListener('dblclick', function () {
+      if (cell.querySelector('input')) return;
+
+      const original = cell.innerText.trim();
+      const id = cell.dataset.id;
+      const key = cell.dataset.key;
+      const subfield = cell.dataset.subfield;
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = original !== '-' ? original : '';
+      input.className = 'form-control form-control-sm';
+
+      cell.innerHTML = '';
+      cell.appendChild(input);
+      input.focus();
+
+      input.addEventListener('blur', () => salvarDetalhe(cell, input.value, original, id, key, subfield));
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') input.blur(); });
+    });
+  });
+
+  // --- 3. Passos
+  document.querySelectorAll('.editable-step').forEach(li => {
+    li.addEventListener('dblclick', function () {
+      if (li.querySelector('input')) return;
+
+      const original = li.innerText.trim();
+      const id = li.dataset.id;
+      const index = li.dataset.index;
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = original;
+      input.className = 'form-control form-control-sm';
+
+      li.innerHTML = '';
+      li.appendChild(input);
+      input.focus();
+
+      input.addEventListener('blur', () => salvarStep(li, input.value, original, id, index));
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') input.blur(); });
+    });
+  });
+
+  // ==============================
+  // FUNÇÕES DE SALVAR
+  // ==============================
+  function salvarAlteracao(cell, novoValor, original, field, id) {
+    if (novoValor === original) { cell.innerText = original; return; }
+    if (!confirm(`Deseja salvar a alteração de "${original}" para "${novoValor}"?`)) {
+      cell.innerText = original; return;
+    }
+
+    fetch(`/troubleshooting/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      body: JSON.stringify({ [field]: novoValor })
+    })
+    .then(res => { if (!res.ok) throw new Error(); cell.innerText = novoValor; })
+    .catch(() => { alert("Erro ao salvar"); cell.innerText = original; });
+  }
+
+  function salvarDetalhe(cell, novoValor, original, id, key, subfield) {
+    if (novoValor === original) { cell.innerText = original; return; }
+    if (!confirm(`Deseja salvar o detalhe "${subfield}" de "${original}" para "${novoValor}"?`)) {
+      cell.innerText = original; return;
+    }
+
+    fetch(`/troubleshooting/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      body: JSON.stringify({ detail_key: key, subfield: subfield, value: novoValor })
+    })
+    .then(res => { if (!res.ok) throw new Error(); cell.innerText = novoValor; })
+    .catch(() => { alert("Erro ao salvar detalhe"); cell.innerText = original; });
+  }
+
+  function salvarStep(li, novoValor, original, id, index) {
+    if (novoValor === original) { li.innerText = original; return; }
+    if (!confirm(`Deseja salvar o passo de "${original}" para "${novoValor}"?`)) {
+      li.innerText = original; return;
+    }
+
+    fetch(`/troubleshooting/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+      body: JSON.stringify({ step_index: index, value: novoValor })
+    })
+    .then(res => { if (!res.ok) throw new Error(); li.innerText = novoValor; })
+    .catch(() => { alert("Erro ao salvar passo"); li.innerText = original; });
+  }
+
+
+
+
+  // --- 3. Passos (textarea inteiro)
+document.querySelectorAll('.editable-steps').forEach(div => {
+  div.addEventListener('dblclick', function () {
+    if (div.querySelector('textarea')) return;
+
+    const original = div.innerText.trim();
+    const id = div.dataset.id;
+
+    const textarea = document.createElement('textarea');
+    textarea.className = 'form-control';
+    textarea.rows = 6;
+    textarea.value = original;
+
+    div.innerHTML = '';
+    div.appendChild(textarea);
+    textarea.focus();
+
+    textarea.addEventListener('blur', () => salvarSteps(div, textarea.value, original, id));
+  });
+});
+
+function salvarSteps(div, novoValor, original, id) {
+  if (novoValor === original) {
+    div.innerHTML = original.replace(/\n/g, "<br>");
+    return;
+  }
+  if (!confirm("Deseja salvar os novos passos?")) {
+    div.innerHTML = original.replace(/\n/g, "<br>");
+    return;
+  }
+
+  fetch(`/troubleshooting/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+    body: JSON.stringify({ steps: novoValor })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error();
+    div.innerHTML = novoValor.replace(/\n/g, "<br>");
+  })
+  .catch(() => {
+    alert("Erro ao salvar passos");
+    div.innerHTML = original.replace(/\n/g, "<br>");
+  });
+}
+
+// Botão Excluir
+document.querySelectorAll('.btn-delete-ts').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.dataset.id;
+
+    if (!confirm("Tem certeza que deseja excluir este troubleshooting?")) {
+      return;
+    }
+
+    fetch(`/troubleshooting/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+      }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error();
+      // Remove o acordeão da tela
+      const item = btn.closest('.accordion-item');
+      if (item) item.remove();
+    })
+    .catch(() => {
+      alert("Erro ao excluir o troubleshooting.");
+    });
+  });
+});
+
+</script>
+
 </body>
 </html>
