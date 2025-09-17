@@ -36,7 +36,7 @@
 
           <!-- Descrição -->
           <div class="col-12">
-            <label class="form-label">Descrição</label>
+            <label class="form-label">Relato</label>
             <input type="text" name="description" class="form-control" placeholder="Breve descrição do problema">
           </div>
 
