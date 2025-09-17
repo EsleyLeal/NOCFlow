@@ -107,9 +107,10 @@
 
           <!-- Campos Dinâmicos -->
           <div class="col-12">
-            <label class="form-label">Detalhes Adicionais</label>
+            <label class="form-label">Detalhes do Circuito</label>
             <div id="dynamic-fields" class="sortable-list"></div>
             <button type="button" class="btn btn-sm btn-outline-info mt-2" onclick="addField('PE')">+ PE:</button>
+            <button type="button" class="btn btn-sm btn-outline-info mt-2" onclick="addField('CPE')">+ CPE:</button>
             <button type="button" class="btn btn-sm btn-outline-info mt-2" onclick="addField('ONU')">+ ONU:</button>
             <button type="button" class="btn btn-sm btn-outline-info mt-2" onclick="addField('VLANS')">+ VLANs:</button>
             <button type="button" class="btn btn-sm btn-outline-info mt-2" onclick="addField('GER')">+ GER:</button>
