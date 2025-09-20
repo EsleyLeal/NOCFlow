@@ -136,8 +136,13 @@
 
 <body class="compact">
 
+
+
  @include('reuse.header')
+ 
  @include('reuse.viewNovoComando')
+
+
 
   <section class="container-xxl py-3">
     <div class="row hero-row">
