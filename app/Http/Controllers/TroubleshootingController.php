@@ -51,7 +51,6 @@ class TroubleshootingController extends Controller
 
         // Monta os detalhes adicionais
         $details = [];
-
         foreach ($request->all() as $key => $value) {
             if (in_array($key, [
                 '_token',
@@ -76,40 +75,47 @@ class TroubleshootingController extends Controller
         }
 
         $data['details'] = json_encode($details, JSON_UNESCAPED_UNICODE);
+        $data['user_id'] = auth()->id(); // vincula o dono
 
         Troubleshooting::create($data);
 
         return back()->with('success', 'Troubleshooting adicionado!');
     }
 
-    // Atualização inline (campos fixos, detalhes ou passos)
     public function update(Request $request, Troubleshooting $troubleshooting)
-    {
-        // === Caso 1: atualização de campo fixo ===
-        if ($request->hasAny([
+{
+    $user = auth()->user();
+
+    // só admin ou dono pode editar
+    if (!($user->isAdmin() || $user->id === $troubleshooting->user_id)) {
+        return response()->json(['error' => 'Não autorizado'], 403);
+    }
+
+    // === Caso 1: atualização de campo fixo ===
+    if ($request->hasAny([
+        'ticket_code','client_name','troubleshoot_type','description',
+        'endereco','bairro','complemento','cidade','grupo','uf'
+    ])) {
+        $troubleshooting->update($request->only([
             'ticket_code','client_name','troubleshoot_type','description',
             'endereco','bairro','complemento','cidade','grupo','uf'
-        ])) {
-            $troubleshooting->update($request->only([
-                'ticket_code','client_name','troubleshoot_type','description',
-                'endereco','bairro','complemento','cidade','grupo','uf'
-            ]));
+        ]));
+    }
+
+    // === Caso 2: atualização de steps (linha específica) ===
+    if ($request->has(['step_index','value'])) {
+        $steps = preg_split("/\r\n|\n|\r/", (string)($troubleshooting->steps ?? ''));
+        $steps = array_values(array_filter(array_map('trim', $steps), fn($s) => $s !== ''));
+
+        $index = (int) $request->step_index;
+        if (isset($steps[$index])) {
+            $steps[$index] = $request->value;
+            $troubleshooting->steps = implode("\n", $steps);
+            $troubleshooting->save();
         }
+    }
 
-        // === Caso 2: atualização de steps (linha específica) ===
-        if ($request->has(['step_index','value'])) {
-            $steps = preg_split("/\r\n|\n|\r/", (string)($troubleshooting->steps ?? ''));
-            $steps = array_values(array_filter(array_map('trim', $steps), fn($s) => $s !== ''));
-
-            $index = (int) $request->step_index;
-            if (isset($steps[$index])) {
-                $steps[$index] = $request->value;
-                $troubleshooting->steps = implode("\n", $steps);
-                $troubleshooting->save();
-            }
-        }
-
-        // === Caso 3: atualização de detalhes adicionais ===
+    // === Caso 3: atualização de detalhes adicionais ===
     if ($request->has(['detail_key','subfield','value'])) {
         $details = json_decode($troubleshooting->details ?? '{}', true);
 
@@ -133,14 +139,63 @@ class TroubleshootingController extends Controller
         $troubleshooting->save();
     }
 
-    return response()->json(['success' => true]);
-    }
+    return response()->json(['success' => true], 200);
+}
+
 
     public function destroy(Troubleshooting $troubleshooting)
 {
-    $troubleshooting->delete();
+    $user = auth()->user();
 
-    return response()->json(['success' => true]);
+    // Só admin ou dono pode excluir
+    if ($user->isAdmin() || $troubleshooting->user_id === $user->id) {
+        $troubleshooting->delete();
+
+        return response()->json(['success' => true], 200);
+    }
+
+    return response()->json(['error' => 'Não autorizado'], 403);
 }
+
+public function search(Request $request)
+{
+    $q = trim($request->get('q', ''));
+
+    $query = Troubleshooting::query();
+
+    if ($q) {
+    $query->where(function($w) use ($q) {
+        $w->where('ticket_code', 'like', "%{$q}%")
+          ->orWhere('client_name', 'like', "%{$q}%")
+          ->orWhere('troubleshoot_type', 'like', "%{$q}%")
+          ->orWhere('description', 'like', "%{$q}%")
+          ->orWhere('endereco', 'like', "%{$q}%")
+          ->orWhere('bairro', 'like', "%{$q}%")
+          ->orWhere('complemento', 'like', "%{$q}%")
+          ->orWhere('cidade', 'like', "%{$q}%")
+          ->orWhere('grupo', 'like', "%{$q}%")
+          ->orWhere('uf', 'like', "%{$q}%")
+          ->orWhere('steps', 'like', "%{$q}%")
+          // 👇 Aqui faz a busca dentro do JSON
+          ->orWhere('details', 'like', "%{$q}%");
+    });
+}
+    $items = $query->latest()->limit(30)->get();
+
+    // Retorna só os campos necessários (evita poluição no front)
+    return response()->json($items->map(function ($ts) {
+        return [
+            'id'          => $ts->id,
+            'ticket_code' => $ts->ticket_code,
+            'client_name' => $ts->client_name,
+            'cidade'      => $ts->cidade,
+            'bairro'      => $ts->bairro,
+            'grupo'       => $ts->grupo,
+            'uf'          => $ts->uf,
+            'description' => $ts->description,
+        ];
+    }));
+}
+
 
 }

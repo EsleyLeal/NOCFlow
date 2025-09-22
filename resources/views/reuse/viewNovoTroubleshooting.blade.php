@@ -21,22 +21,18 @@
 
           <!-- Tipo de Troubleshooting -->
           <div class="col-lg-4">
-            <label class="form-label">Tipo de Troubleshooting</label>
+            <label class="form-label">Tipo de Contrato</label>
             <select name="troubleshoot_type" class="form-select">
               <option value="">Selecione</option>
-              <option value="ip">Dados IP</option>
-              <option value="lan">LAN to LAN</option>
-              <option value="bgp">BGP</option>
-              <option value="vpn-l2">VPN L2</option>
-              <option value="vpn-l3">VPN L3</option>
-              <option value="escola">Escola</option>
-              <option value="massivo">Massivo</option>
+              <option value="VPN PONTO A PONTO">VPN PONTO A PONTO</option>
+              <option value="DADOS IP DEDICADO">DADOS IP DEDICADO</option>
+              <option value="PME 30 MBPS - SEMI DEDICADO">PME SEMI DEDICADO</option>
             </select>
           </div>
 
           <!-- Descrição -->
           <div class="col-12">
-            <label class="form-label">Relato</label>
+            <label class="form-label">Tipo de Problema</label>
             <input type="text" name="description" class="form-control" placeholder="Breve descrição do problema">
           </div>
 
@@ -122,7 +118,7 @@
 
           <!-- Passos -->
           <div class="col-12">
-            <label class="form-label">Passos para a solução</label>
+            <label class="form-label">O que foi feito para resolução do Troubleshooting</label>
             <textarea name="steps" class="form-control" rows="6" placeholder="Digite cada passo em uma linha separada..."></textarea>
           </div>
         </div>

@@ -134,179 +134,202 @@
   </div>
 </section>
 
+<div class="container-xxl mb-3 position-relative">
+  <input type="text" id="searchBox" class="form-control"
+         placeholder="Pesquisar por cliente, cidade, ticket, grupo...">
 
-  <!-- ACORDEÃO (dinâmico) -->
+  <div id="searchResults" class="list-group position-absolute w-100 shadow"
+       style="z-index:1050; max-height: 300px; overflow-y:auto; display:none;">
+  </div>
+</div>
+
+ <!-- ACORDEÃO (dinâmico) -->
 <main class="container-xxl pb-5">
   <div class="accordion accordion-dark" id="accTroubles">
 
-
     @forelse($items as $ts)
       @php
-        // gera IDs únicos para o acordeão
         $hid = "h-ts-{$ts->id}";
         $cid = "c-ts-{$ts->id}";
-
-        // quebra os passos em linhas (ignora vazias)
         $steps = preg_split("/\r\n|\n|\r/", (string)($ts->steps ?? ''));
         $steps = array_values(array_filter(array_map('trim', $steps), fn($s) => $s !== ''));
       @endphp
 
       <div class="accordion-item">
-  <!-- Cabeçalho do acordeão -->
-  <h2 class="accordion-header" id="{{ $hid }}">
-    <button class="accordion-button collapsed" type="button"
-            data-bs-toggle="collapse" data-bs-target="#{{ $cid }}"
-            aria-expanded="false" aria-controls="{{ $cid }}">
-      <span class="badge-chip">TS</span>
-      <div>
-        <div class="fw-bold" style="font-family:ui-monospace,Menlo,Consolas">
-          {{ strtoupper($ts->title) }}
-        </div>
-        @if($ts->description)
-          <small class="muted">{{ strtoupper($ts->client_name) }} - {{ strtoupper($ts->cidade) }}</small>
-        @endif
-      </div>
-    </button>
-  </h2>
+        <!-- Cabeçalho -->
+        <h2 class="accordion-header" id="{{ $hid }}">
+          <button class="accordion-button collapsed" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#{{ $cid }}"
+                  aria-expanded="false" aria-controls="{{ $cid }}">
+            <span class="badge-chip">TS</span>
+           <div>
+  <small class="muted">
+    {{ strtoupper($ts->client_name ?? '-') }} - {{ strtoupper($ts->cidade ?? '-') }}
+    | Criado por:
+    @php
+        // pega o nome bruto (pode vir "esley.s", "Esley Santana", etc)
+        $raw = (string) ($ts->user->nome ?? '');
 
-  <div id="{{ $cid }}" class="accordion-collapse collapse" aria-labelledby="{{ $hid }}" data-bs-parent="#accTroubles">
-    <div class="accordion-body">
+        // quebra no primeiro separador: ponto, espaço ou underline
+        $token = preg_split('/[.\s_]+/u', trim($raw), 2)[0] ?? '';
 
-      <!-- Botão Excluir -->
-      <div class="text-end mt-3">
-        <button class="btn btn-sm btn-danger btn-delete-ts" data-id="{{ $ts->id }}">
-          Excluir
-        </button>
-      </div>
-
-      <!-- Cadastro do Cliente -->
-      <h6 class="neon">Cadastro do Cliente</h6>
-      <div class="mb-3">
-        <table class="table table-sm table-dark table-bordered align-middle">
-          <tbody>
-            <tr>
-              <th style="width: 180px;">Código do Chamado</th>
-              <td class="editable" data-id="{{ $ts->id }}" data-field="ticket_code">
-                {{ $ts->ticket_code ? strtoupper($ts->ticket_code) : '-' }}
-              </td>
-            </tr>
-            <tr>
-              <th>Cliente</th>
-              <td class="editable" data-id="{{ $ts->id }}" data-field="client_name">
-                {{ $ts->client_name ? strtoupper($ts->client_name) : '-' }}
-              </td>
-            </tr>
-            <tr>
-              <th>Endereço</th>
-              <td class="editable" data-id="{{ $ts->id }}" data-field="endereco">
-                {{ $ts->endereco ? strtoupper($ts->endereco) : '-' }}
-              </td>
-            </tr>
-            <tr>
-              <th>Bairro</th>
-              <td class="editable" data-id="{{ $ts->id }}" data-field="bairro">
-                {{ $ts->bairro ? strtoupper($ts->bairro) : '-' }}
-              </td>
-            </tr>
-            <tr>
-              <th>Complemento</th>
-              <td class="editable" data-id="{{ $ts->id }}" data-field="complemento">
-                {{ $ts->complemento ? strtoupper($ts->complemento) : '-' }}
-              </td>
-            </tr>
-            <tr>
-              <th>Cidade</th>
-              <td class="editable" data-id="{{ $ts->id }}" data-field="cidade">
-                {{ $ts->cidade ? strtoupper($ts->cidade) : '-' }}
-              </td>
-            </tr>
-            <tr>
-              <th>Grupo</th>
-              <td class="editable" data-id="{{ $ts->id }}" data-field="grupo">
-                {{ $ts->grupo ? strtoupper($ts->grupo) : '-' }}
-              </td>
-            </tr>
-            <tr>
-              <th>UF</th>
-              <td class="editable" data-id="{{ $ts->id }}" data-field="uf">
-                {{ $ts->uf ? strtoupper($ts->uf) : '-' }}
-              </td>
-            </tr>
-            <tr>
-              <th>Relato</th>
-              <td class="editable" data-id="{{ $ts->id }}" data-field="description">
-                {{ $ts->description ? strtoupper($ts->description) : '-' }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Informação de Circuito -->
-      @if($ts->details && count(json_decode($ts->details, true)) > 0)
-        <h6 class="neon">Informação de Circuito</h6>
-        <div class="table-responsive mb-3">
-          <table class="table table-sm table-dark table-striped table-bordered align-middle">
-            <thead>
-              <tr>
-                <th style="width: 120px;">Campo</th>
-                <th>Valor</th>
-                <th style="width: 160px;">Fabricante</th>
-                <th>Observações</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach(json_decode($ts->details, true) as $key => $entries)
-                @foreach($entries as $entry)
-                  @php
-                    $value = is_array($entry) ? ($entry['value'] ?? '') : $entry;
-                    $vendor = is_array($entry) ? ($entry['vendor'] ?? '') : '';
-                    $notes  = is_array($entry) ? ($entry['notes'] ?? '') : '';
-
-                    // função inline pra detectar se tem link
-                    $hasLink = fn($txt) => Str::contains($txt, ['http://', 'https://']);
-                  @endphp
-
-                  @if(!empty($value) || !empty($vendor) || !empty($notes))
-                    <tr>
-                      <td class="fw-bold text-uppercase">{{ strtoupper($key) }}</td>
-                      <td class="editable-detail"
-                          data-id="{{ $ts->id }}"
-                          data-key="{{ $key }}"
-                          data-subfield="value">
-                        {!! $hasLink($value) ? $value : strtoupper($value) !!}
-                      </td>
-                      <td class="editable-detail"
-                          data-id="{{ $ts->id }}"
-                          data-key="{{ $key }}"
-                          data-subfield="vendor">
-                        {!! $vendor ? ($hasLink($vendor) ? $vendor : strtoupper($vendor)) : '-' !!}
-                      </td>
-                      <td class="editable-detail"
-                          data-id="{{ $ts->id }}"
-                          data-key="{{ $key }}"
-                          data-subfield="notes">
-                        {!! $notes ? ($hasLink($notes) ? $notes : strtoupper($notes)) : '-' !!}
-                      </td>
-                    </tr>
-                  @endif
-                @endforeach
-              @endforeach
-            </tbody>
-          </table>
-        </div>
-      @endif
-
-      <!-- Ocorrência -->
-      @if(!empty($ts->steps))
-        <h6 class="neon">Ocorrência</h6>
-        <div class="editable-steps text-white bg-dark p-3 rounded"
-             data-id="{{ $ts->id }}">
-          {!! nl2br(e(strtoupper($ts->steps))) !!}
-        </div>
-      @endif
-
+        // capitaliza corretamente (com acentos)
+        $firstName = $token !== ''
+            ? mb_strtoupper(mb_substr($token, 0, 1), 'UTF-8') . mb_strtolower(mb_substr($token, 1), 'UTF-8')
+            : '-';
+    @endphp
+    {{ $ts->user?->isAdmin() ? 'Administrador' : $firstName }}
+  </small>
 </div>
+
+          </button>
+        </h2>
+
+        <div id="{{ $cid }}" class="accordion-collapse collapse" aria-labelledby="{{ $hid }}" data-bs-parent="#accTroubles">
+          <div class="accordion-body">
+
+            <!-- Botão Excluir: só mostra se admin ou dono -->
+            @can('delete', $ts)
+              <div class="text-end mt-3">
+                <button class="btn btn-sm btn-danger btn-delete-ts" data-id="{{ $ts->id }}">
+                  Excluir
+                </button>
+              </div>
+            @endcan
+
+            <!-- Cadastro do Cliente -->
+            <h6 class="neon">Cadastro do Cliente</h6>
+            <div class="mb-3">
+              <table class="table table-sm table-dark table-bordered align-middle">
+                <tbody>
+                  <tr>
+                    <th style="width: 180px;">Código do Chamado</th>
+                    <td class="editable" data-id="{{ $ts->id }}" data-field="ticket_code">
+                      {{ $ts->ticket_code ? strtoupper($ts->ticket_code) : '-' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Cliente</th>
+                    <td class="editable" data-id="{{ $ts->id }}" data-field="client_name">
+                      {{ $ts->client_name ? strtoupper($ts->client_name) : '-' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Endereço</th>
+                    <td class="editable" data-id="{{ $ts->id }}" data-field="endereco">
+                      {{ $ts->endereco ? strtoupper($ts->endereco) : '-' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Bairro</th>
+                    <td class="editable" data-id="{{ $ts->id }}" data-field="bairro">
+                      {{ $ts->bairro ? strtoupper($ts->bairro) : '-' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Complemento</th>
+                    <td class="editable" data-id="{{ $ts->id }}" data-field="complemento">
+                      {{ $ts->complemento ? strtoupper($ts->complemento) : '-' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Cidade</th>
+                    <td class="editable" data-id="{{ $ts->id }}" data-field="cidade">
+                      {{ $ts->cidade ? strtoupper($ts->cidade) : '-' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Grupo</th>
+                    <td class="editable" data-id="{{ $ts->id }}" data-field="grupo">
+                      {{ $ts->grupo ? strtoupper($ts->grupo) : '-' }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>UF</th>
+                    <td class="editable" data-id="{{ $ts->id }}" data-field="uf">
+                      {{ $ts->uf ? strtoupper($ts->uf) : '-' }}
+                    </td>
+                  </tr>
+                  <tr>
+  <th>Tipo de Contrato</th>
+  <td class="editable" data-id="{{ $ts->id }}" data-field="troubleshoot_type">
+    {{ $ts->troubleshoot_type ? strtoupper($ts->troubleshoot_type) : '-' }}
+  </td>
+</tr>
+<tr>
+  <th>Relato</th>
+  <td class="editable" data-id="{{ $ts->id }}" data-field="description">
+    {{ $ts->description ? strtoupper($ts->description) : '-' }}
+  </td>
+</tr>
+
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Informação de Circuito -->
+            @if($ts->details && count(json_decode($ts->details, true)) > 0)
+              <h6 class="neon">Informação de Circuito</h6>
+              <div class="table-responsive mb-3">
+                <table class="table table-sm table-dark table-striped table-bordered align-middle">
+                  <thead>
+                    <tr>
+                      <th style="width: 120px;">Campo</th>
+                      <th>Valor</th>
+                      <th style="width: 160px;">Fabricante</th>
+                      <th>Observações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach(json_decode($ts->details, true) as $key => $entries)
+                      @foreach($entries as $entry)
+                        @php
+                          $value = is_array($entry) ? ($entry['value'] ?? '') : $entry;
+                          $vendor = is_array($entry) ? ($entry['vendor'] ?? '') : '';
+                          $notes  = is_array($entry) ? ($entry['notes'] ?? '') : '';
+                          $hasLink = fn($txt) => Str::contains($txt, ['http://', 'https://']);
+                        @endphp
+
+                        @if(!empty($value) || !empty($vendor) || !empty($notes))
+                          <tr>
+                            <td class="fw-bold text-uppercase">{{ strtoupper($key) }}</td>
+                            <td class="editable-detail"
+                                data-id="{{ $ts->id }}"
+                                data-key="{{ $key }}"
+                                data-subfield="value">
+                              {!! $hasLink($value) ? $value : strtoupper($value) !!}
+                            </td>
+                            <td class="editable-detail"
+                                data-id="{{ $ts->id }}"
+                                data-key="{{ $key }}"
+                                data-subfield="vendor">
+                              {!! $vendor ? ($hasLink($vendor) ? $vendor : strtoupper($vendor)) : '-' !!}
+                            </td>
+                            <td class="editable-detail"
+                                data-id="{{ $ts->id }}"
+                                data-key="{{ $key }}"
+                                data-subfield="notes">
+                              {!! $notes ? ($hasLink($notes) ? $notes : strtoupper($notes)) : '-' !!}
+                            </td>
+                          </tr>
+                        @endif
+                      @endforeach
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            @endif
+
+            <!-- Ocorrência -->
+            @if(!empty($ts->steps))
+              <h6 class="neon">O que foi feito para resolução do Troubleshooting</h6>
+              <div class="editable-steps text-white bg-dark p-3 rounded"
+                   data-id="{{ $ts->id }}">
+                {!! nl2br(e(strtoupper($ts->steps))) !!}
+              </div>
+            @endif
+
+          </div>
         </div>
       </div>
     @empty
@@ -316,12 +339,98 @@
   </div>
 </main>
 
+
  @include('reuse.footer')
 
   <script>
+
+document.addEventListener("DOMContentLoaded", () => {
+    const searchBox = document.getElementById("searchBox");
+    const resultsDiv = document.getElementById("searchResults");
+    let timer = null;
+
+    searchBox.addEventListener("input", function() {
+        clearTimeout(timer);
+        const q = this.value.trim();
+
+        if (!q) {
+            resultsDiv.style.display = "none";
+            resultsDiv.innerHTML = "";
+            return;
+        }
+
+        timer = setTimeout(() => {
+            fetch(`/troubleshooting/search?q=${encodeURIComponent(q)}`)
+                .then(res => res.json())
+                .then(data => {
+                    resultsDiv.innerHTML = "";
+                    if (data.length === 0) {
+                        resultsDiv.style.display = "block";
+                        resultsDiv.innerHTML = `<div class="list-group-item text-muted">Nenhum resultado</div>`;
+                        return;
+                    }
+
+                    data.forEach(item => {
+                        const el = document.createElement("a");
+                        el.href = `#c-ts-${item.id}`;
+                        el.className = "list-group-item list-group-item-action";
+                        el.innerHTML = `
+                            <div><strong>${item.client_name ?? '-'}</strong> (${item.ticket_code ?? '-'})</div>
+                            <small>${item.cidade ?? ''} ${item.uf ?? ''} | ${item.grupo ?? ''}</small><br>
+                            <small class="text-muted">${item.description ?? ''}</small>
+                        `;
+
+                        // Clique abre o acordeão e faz scroll
+                        el.addEventListener("click", (e) => {
+                            e.preventDefault();
+
+                            // Fecha todos os abertos
+                            document.querySelectorAll('.accordion-collapse.show')
+                                .forEach(c => c.classList.remove('show'));
+
+                            const target = document.querySelector(`#c-ts-${item.id}`);
+                            if (target) {
+                                target.classList.add('show');
+                                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                                const headerBtn = target.closest('.accordion-item').querySelector('.accordion-button');
+                                if (headerBtn && headerBtn.classList.contains('collapsed')) {
+                                    headerBtn.classList.remove('collapsed');
+                                }
+                            }
+
+                            resultsDiv.style.display = "none";
+                            resultsDiv.innerHTML = "";
+                            searchBox.value = "";
+                        });
+
+                        resultsDiv.appendChild(el);
+                    });
+
+                    resultsDiv.style.display = "block";
+                })
+                .catch(() => {
+                    resultsDiv.innerHTML = "<div class='list-group-item text-danger'>Erro ao buscar...</div>";
+                    resultsDiv.style.display = "block";
+                });
+        }, 400); // debounce
+    });
+
+    // esconder dropdown se clicar fora
+    document.addEventListener("click", (e) => {
+        if (!resultsDiv.contains(e.target) && e.target !== searchBox) {
+            resultsDiv.style.display = "none";
+        }
+    });
+});
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
   // botão "copiar"
-  document.querySelectorAll('.kbd-copy').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
+  document.querySelectorAll('.kbd-copy').forEach(btn => {
+    btn.addEventListener('click', async ()=> {
       try{
         await navigator.clipboard.writeText(btn.getAttribute('data-copy')||'');
         const html = btn.innerHTML;
@@ -335,7 +444,7 @@
   // EDIÇÃO INLINE
   // ==============================
 
-  // --- 1. Campos fixos (já funcionava)
+  // --- 1. Campos fixos
   document.querySelectorAll('.editable').forEach(cell => {
     cell.addEventListener('dblclick', function () {
       if (cell.querySelector('input')) return;
@@ -382,7 +491,7 @@
     });
   });
 
-  // --- 3. Passos
+  // --- 3. Passos (linha por linha)
   document.querySelectorAll('.editable-step').forEach(li => {
     li.addEventListener('dblclick', function () {
       if (li.querySelector('input')) return;
@@ -405,77 +514,100 @@
     });
   });
 
-  // ==============================
-  // FUNÇÕES DE SALVAR
-  // ==============================
-  function salvarAlteracao(cell, novoValor, original, field, id) {
-    if (novoValor === original) { cell.innerText = original; return; }
-    if (!confirm(`Deseja salvar a alteração de "${original}" para "${novoValor}"?`)) {
-      cell.innerText = original; return;
-    }
+  // --- 4. Passos (textarea inteiro)
+  document.querySelectorAll('.editable-steps').forEach(div => {
+    div.addEventListener('dblclick', function () {
+      if (div.querySelector('textarea')) return;
 
-    fetch(`/troubleshooting/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      body: JSON.stringify({ [field]: novoValor })
-    })
-    .then(res => { if (!res.ok) throw new Error(); cell.innerText = novoValor; })
-    .catch(() => { alert("Erro ao salvar"); cell.innerText = original; });
-  }
+      const original = div.innerText.trim();
+      const id = div.dataset.id;
 
-  function salvarDetalhe(cell, novoValor, original, id, key, subfield) {
-    if (novoValor === original) { cell.innerText = original; return; }
-    if (!confirm(`Deseja salvar o detalhe "${subfield}" de "${original}" para "${novoValor}"?`)) {
-      cell.innerText = original; return;
-    }
+      const textarea = document.createElement('textarea');
+      textarea.className = 'form-control';
+      textarea.rows = 6;
+      textarea.value = original;
 
-    fetch(`/troubleshooting/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      body: JSON.stringify({ detail_key: key, subfield: subfield, value: novoValor })
-    })
-    .then(res => { if (!res.ok) throw new Error(); cell.innerText = novoValor; })
-    .catch(() => { alert("Erro ao salvar detalhe"); cell.innerText = original; });
-  }
+      div.innerHTML = '';
+      div.appendChild(textarea);
+      textarea.focus();
 
-  function salvarStep(li, novoValor, original, id, index) {
-    if (novoValor === original) { li.innerText = original; return; }
-    if (!confirm(`Deseja salvar o passo de "${original}" para "${novoValor}"?`)) {
-      li.innerText = original; return;
-    }
-
-    fetch(`/troubleshooting/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-      body: JSON.stringify({ step_index: index, value: novoValor })
-    })
-    .then(res => { if (!res.ok) throw new Error(); li.innerText = novoValor; })
-    .catch(() => { alert("Erro ao salvar passo"); li.innerText = original; });
-  }
-
-
-
-
-  // --- 3. Passos (textarea inteiro)
-document.querySelectorAll('.editable-steps').forEach(div => {
-  div.addEventListener('dblclick', function () {
-    if (div.querySelector('textarea')) return;
-
-    const original = div.innerText.trim();
-    const id = div.dataset.id;
-
-    const textarea = document.createElement('textarea');
-    textarea.className = 'form-control';
-    textarea.rows = 6;
-    textarea.value = original;
-
-    div.innerHTML = '';
-    div.appendChild(textarea);
-    textarea.focus();
-
-    textarea.addEventListener('blur', () => salvarSteps(div, textarea.value, original, id));
+      textarea.addEventListener('blur', () => salvarSteps(div, textarea.value, original, id));
+    });
   });
-});
+
+  // --- Botão Excluir
+  document.querySelectorAll('.btn-delete-ts').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+
+      if (!confirm("Tem certeza que deseja excluir este troubleshooting?")) {
+        return;
+      }
+
+      fetch(`/troubleshooting/${id}`, {
+        method: 'DELETE',
+        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+      })
+      .then(res => {
+        if (!res.ok) throw new Error();
+        const item = btn.closest('.accordion-item');
+        if (item) item.remove();
+      })
+      .catch(() => {
+        alert("Erro ao excluir o troubleshooting.");
+      });
+    });
+  });
+
+}); // fim do DOMContentLoaded
+
+// ==============================
+// FUNÇÕES DE SALVAR
+// ==============================
+function salvarAlteracao(cell, novoValor, original, field, id) {
+  if (novoValor === original) { cell.innerText = original; return; }
+  if (!confirm(`Deseja salvar a alteração de "${original}" para "${novoValor}"?`)) {
+    cell.innerText = original; return;
+  }
+
+  fetch(`/troubleshooting/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+    body: JSON.stringify({ [field]: novoValor })
+  })
+  .then(res => { if (!res.ok) throw new Error(); cell.innerText = novoValor; })
+  .catch(() => { alert("Erro ao salvar, talvez você não seja um administrador"); cell.innerText = original; });
+}
+
+function salvarDetalhe(cell, novoValor, original, id, key, subfield) {
+  if (novoValor === original) { cell.innerText = original; return; }
+  if (!confirm(`Deseja salvar o detalhe "${subfield}" de "${original}" para "${novoValor}"?`)) {
+    cell.innerText = original; return;
+  }
+
+  fetch(`/troubleshooting/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+    body: JSON.stringify({ detail_key: key, subfield: subfield, value: novoValor })
+  })
+  .then(res => { if (!res.ok) throw new Error(); cell.innerText = novoValor; })
+  .catch(() => { alert("Erro ao salvar detalhe"); cell.innerText = original; });
+}
+
+function salvarStep(li, novoValor, original, id, index) {
+  if (novoValor === original) { li.innerText = original; return; }
+  if (!confirm(`Deseja salvar o passo de "${original}" para "${novoValor}"?`)) {
+    li.innerText = original; return;
+  }
+
+  fetch(`/troubleshooting/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+    body: JSON.stringify({ step_index: index, value: novoValor })
+  })
+  .then(res => { if (!res.ok) throw new Error(); li.innerText = novoValor; })
+  .catch(() => { alert("Erro ao salvar passo"); li.innerText = original; });
+}
 
 function salvarSteps(div, novoValor, original, id) {
   if (novoValor === original) {
@@ -501,35 +633,8 @@ function salvarSteps(div, novoValor, original, id) {
     div.innerHTML = original.replace(/\n/g, "<br>");
   });
 }
-
-// Botão Excluir
-document.querySelectorAll('.btn-delete-ts').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const id = btn.dataset.id;
-
-    if (!confirm("Tem certeza que deseja excluir este troubleshooting?")) {
-      return;
-    }
-
-    fetch(`/troubleshooting/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-      }
-    })
-    .then(res => {
-      if (!res.ok) throw new Error();
-      // Remove o acordeão da tela
-      const item = btn.closest('.accordion-item');
-      if (item) item.remove();
-    })
-    .catch(() => {
-      alert("Erro ao excluir o troubleshooting.");
-    });
-  });
-});
-
 </script>
+
 
 </body>
 </html>

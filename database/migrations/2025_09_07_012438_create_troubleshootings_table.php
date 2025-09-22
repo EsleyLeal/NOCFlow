@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('troubleshootings', function (Blueprint $table) {
             $table->id();
+
+            // Relacionamento com o usuário que criou
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
+            // Campos principais
             $table->string('ticket_code')->nullable();       // Código do chamado
             $table->string('client_name')->nullable();       // Nome do cliente
             $table->string('troubleshoot_type')->nullable(); // Tipo de troubleshooting
@@ -29,6 +34,7 @@ return new class extends Migration
             // Dinâmicos e passos
             $table->json('details')->nullable();  // JSON dos detalhes adicionais
             $table->text('steps')->nullable();    // Passos
+
             $table->timestamps();
         });
     }

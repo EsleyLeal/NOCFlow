@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class troubleshooting extends Model
+class Troubleshooting extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'ticket_code',
         'client_name',
@@ -19,7 +22,14 @@ class troubleshooting extends Model
         'uf',
         'details',
         'steps',
+        'user_id', // adiciona o vínculo com o dono
     ];
 
-
+    /**
+     * Relacionamento: cada troubleshooting pertence a um usuário.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
