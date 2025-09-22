@@ -25,6 +25,10 @@ class Troubleshooting extends Model
         'user_id', // adiciona o vínculo com o dono
     ];
 
+    protected $casts = [
+        'details' => 'array', // 👈 transforma JSON em array automaticamente
+    ];
+
     /**
      * Relacionamento: cada troubleshooting pertence a um usuário.
      */
