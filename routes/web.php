@@ -48,5 +48,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/troubleshooting/search', [\App\Http\Controllers\TroubleshootingController::class, 'search'])
     ->name('troubleshooting.search');
 
+Route::get('/troubleshooting/{id}/edit', [\App\Http\Controllers\TroubleshootingController::class, 'edit'])
+    ->name('troubleshooting.edit');
+
 
 });

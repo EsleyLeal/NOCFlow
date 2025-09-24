@@ -135,8 +135,14 @@
 </section>
 
 <div class="container-xxl mb-3 position-relative">
+  <div class="input-group">
+  <span class="input-group-text bg-dark text-light">🔍</span>
   <input type="text" id="searchBox" class="form-control"
          placeholder="Pesquisar por cliente, cidade, ticket, grupo...">
+</div>
+
+
+
 
   <div id="searchResults" class="list-group position-absolute w-100 shadow"
        style="z-index:1050; max-height: 300px; overflow-y:auto; display:none;">
@@ -194,6 +200,11 @@
     <button class="btn btn-sm btn-success btn-copy-circuit" data-id="{{ $ts->id }}">
       Copiar Circuito
     </button>
+
+    {{-- <button class="btn btn-sm btn-primary btn-edit-ts" data-id="{{ $ts->id }}">
+      Editar
+    </button> --}}
+
     <button class="btn btn-sm btn-danger btn-delete-ts" data-id="{{ $ts->id }}">
       Excluir
     </button>
@@ -287,43 +298,78 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @foreach(json_decode($ts->details, true) as $key => $entries)
-                      @foreach($entries as $entry)
-                        @php
-                          $value = is_array($entry) ? ($entry['value'] ?? '') : $entry;
-                          $vendor = is_array($entry) ? ($entry['vendor'] ?? '') : '';
-                          $notes  = is_array($entry) ? ($entry['notes'] ?? '') : '';
-                          $hasLink = fn($txt) => Str::contains($txt, ['http://', 'https://']);
-                        @endphp
+  @foreach(json_decode($ts->details, true) as $key => $entries)
+    @foreach($entries as $entry)
+      @php
+        $value  = is_array($entry) ? ($entry['value'] ?? '') : $entry;
+        $vendor = is_array($entry) ? ($entry['vendor'] ?? '') : '';
+        $notes  = is_array($entry) ? ($entry['notes'] ?? '') : '';
+        $hasLink = fn($txt) => Str::contains($txt, ['http://', 'https://']);
+      @endphp
 
-                        @if(!empty($value) || !empty($vendor) || !empty($notes))
-                          <tr>
-                            <td class="fw-bold text-uppercase">{{ strtoupper($key) }}</td>
-                            <td class="editable-detail"
-                                data-id="{{ $ts->id }}"
-                                data-key="{{ $key }}"
-                                data-subfield="value">
-                              {!! $hasLink($value) ? $value : strtoupper($value) !!}
-                            </td>
-                            <td class="editable-detail"
-                                data-id="{{ $ts->id }}"
-                                data-key="{{ $key }}"
-                                data-subfield="vendor">
-                              {!! $vendor ? ($hasLink($vendor) ? $vendor : strtoupper($vendor)) : '-' !!}
-                            </td>
-                            <td class="editable-detail"
-                                data-id="{{ $ts->id }}"
-                                data-key="{{ $key }}"
-                                data-subfield="notes">
-                              {!! $notes ? ($hasLink($notes) ? $notes : strtoupper($notes)) : '-' !!}
-                            </td>
-                          </tr>
-                        @endif
-                      @endforeach
-                    @endforeach
-                  </tbody>
+      @if(!empty($value) || !empty($vendor) || !empty($notes))
+        <tr>
+          <td class="fw-bold text-uppercase">{{ strtoupper($key) }}</td>
+
+          <!-- VALUE -->
+          <td class="editable-detail"
+              data-id="{{ $ts->id }}"
+              data-key="{{ $key }}"
+              data-subfield="value"
+              data-value="{{ $value }}">
+            @if($hasLink($value))
+              <div class="d-flex align-items-center gap-2">
+                <span class="text-truncate" style="max-width:220px;">{{ $value }}</span>
+                <a href="{{ $value }}" target="_blank" class="btn btn-sm btn-primary">Abrir</a>
+              </div>
+            @else
+              {{ $value ? strtoupper($value) : '-' }}
+            @endif
+          </td>
+
+          <!-- VENDOR -->
+          <td class="editable-detail"
+              data-id="{{ $ts->id }}"
+              data-key="{{ $key }}"
+              data-subfield="vendor"
+              data-value="{{ $vendor }}">
+            @if($hasLink($vendor))
+              <div class="d-flex align-items-center gap-2">
+                <span class="text-truncate" style="max-width:220px;">{{ $vendor }}</span>
+                <a href="{{ $vendor }}" target="_blank" class="btn btn-sm btn-primary">Abrir</a>
+              </div>
+            @else
+              {{ $vendor ? strtoupper($vendor) : '-' }}
+            @endif
+          </td>
+
+          <!-- NOTES -->
+          <td class="editable-detail"
+              data-id="{{ $ts->id }}"
+              data-key="{{ $key }}"
+              data-subfield="notes"
+              data-value="{{ $notes }}">
+            @if($hasLink($notes))
+              <div class="d-flex align-items-center gap-2">
+                <span class="text-truncate" style="max-width:220px;">{{ $notes }}</span>
+                <a href="{{ $notes }}" target="_blank" class="btn btn-sm btn-primary">Abrir</a>
+              </div>
+            @else
+              {{ $notes ? strtoupper($notes) : '-' }}
+            @endif
+          </td>
+        </tr>
+      @endif
+    @endforeach
+  @endforeach
+</tbody>
+
                 </table>
               </div>
+
+              <!-- Botão para adicionar novo campo -->
+
+
             @endif
 
             <!-- Ocorrência -->
@@ -342,6 +388,8 @@
       <div class="text-center muted py-5">Nenhum troubleshooting cadastrado.</div>
     @endforelse
 
+
+
   </div>
 </main>
 
@@ -349,6 +397,8 @@
  @include('reuse.footer')
 
   <script>
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const searchBox = document.getElementById("searchBox");
@@ -459,7 +509,8 @@ document.querySelectorAll('.btn-copy-circuit').forEach(btn => {
     table.querySelectorAll('tbody tr').forEach(row => {
       const cols = row.querySelectorAll('td, th');
 let linha = Array.from(cols)
-  .map(col => col.innerText.trim())
+  .map(col => col.dataset.value ?? col.innerText.trim())
+
   .filter(txt => txt && txt !== "-")   // remove vazio e "-"
   .join(" | ");
       texto += linha + "\n";
@@ -498,7 +549,8 @@ document.addEventListener("DOMContentLoaded", () => {
     cell.addEventListener('dblclick', function () {
       if (cell.querySelector('input')) return;
 
-      const original = cell.innerText.trim();
+      const original = cell.dataset.value ?? cell.innerText.trim();
+
       const field = cell.dataset.field;
       const id = cell.dataset.id;
 
@@ -521,7 +573,8 @@ document.addEventListener("DOMContentLoaded", () => {
     cell.addEventListener('dblclick', function () {
       if (cell.querySelector('input')) return;
 
-      const original = cell.innerText.trim();
+      const original = cell.dataset.value ?? cell.innerText.trim();
+
       const id = cell.dataset.id;
       const key = cell.dataset.key;
       const subfield = cell.dataset.subfield;
@@ -629,9 +682,9 @@ function salvarAlteracao(cell, novoValor, original, field, id) {
 }
 
 function salvarDetalhe(cell, novoValor, original, id, key, subfield) {
-  if (novoValor === original) { cell.innerText = original; return; }
-  if (!confirm(`Deseja salvar o detalhe "${subfield}" de "${original}" para "${novoValor}"?`)) {
-    cell.innerText = original; return;
+  if (novoValor === original) {
+    cell.innerHTML = renderCellContent(original);
+    return;
   }
 
   fetch(`/troubleshooting/${id}`, {
@@ -639,9 +692,33 @@ function salvarDetalhe(cell, novoValor, original, id, key, subfield) {
     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
     body: JSON.stringify({ detail_key: key, subfield: subfield, value: novoValor })
   })
-  .then(res => { if (!res.ok) throw new Error(); cell.innerText = novoValor; })
-  .catch(() => { alert("Erro ao salvar detalhe"); cell.innerText = original; });
+  .then(res => {
+    if (!res.ok) throw new Error();
+
+    // mantém valor cru no data-value
+    cell.dataset.value = novoValor;
+    cell.innerHTML = renderCellContent(novoValor);
+  })
+  .catch(() => {
+    alert("Erro ao salvar detalhe");
+    cell.innerHTML = renderCellContent(original);
+  });
 }
+
+
+function renderCellContent(value) {
+  if (value && (value.startsWith('http://') || value.startsWith('https://'))) {
+    return `
+      <div class="d-flex align-items-center gap-2">
+        <span class="link-text text-truncate" style="max-width:220px;">${value}</span>
+        <a href="${value}" target="_blank" class="btn btn-sm btn-primary">Abrir</a>
+      </div>
+    `;
+  }
+  return value ? value.toUpperCase() : '-';
+}
+
+
 
 function salvarStep(li, novoValor, original, id, index) {
   if (novoValor === original) { li.innerText = original; return; }

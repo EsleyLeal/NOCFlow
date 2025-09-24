@@ -142,6 +142,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
 <script>
+    
   // Ativa drag-and-drop nos cards
   new Sortable(document.getElementById('dynamic-fields'), {
     animation: 150,

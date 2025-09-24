@@ -164,25 +164,33 @@ public function search(Request $request)
     $query = Troubleshooting::query();
 
     if ($q) {
-    $query->where(function($w) use ($q) {
-        $w->where('ticket_code', 'like', "%{$q}%")
-          ->orWhere('client_name', 'like', "%{$q}%")
-          ->orWhere('troubleshoot_type', 'like', "%{$q}%")
-          ->orWhere('description', 'like', "%{$q}%")
-          ->orWhere('endereco', 'like', "%{$q}%")
-          ->orWhere('bairro', 'like', "%{$q}%")
-          ->orWhere('complemento', 'like', "%{$q}%")
-          ->orWhere('cidade', 'like', "%{$q}%")
-          ->orWhere('grupo', 'like', "%{$q}%")
-          ->orWhere('uf', 'like', "%{$q}%")
-          ->orWhere('steps', 'like', "%{$q}%")
-          // 👇 Aqui faz a busca dentro do JSON
-          ->orWhere('details', 'like', "%{$q}%");
-    });
-}
+        // Quebra a pesquisa em tokens (palavras separadas por espaço)
+        $tokens = preg_split('/\s+/', $q);
+
+        // Opcional: ignora palavras "bobas"
+        $stopwords = ['de','da','do','a','o','em','no','na'];
+        $tokens = array_diff($tokens, $stopwords);
+
+        foreach ($tokens as $token) {
+            $query->where(function($w) use ($token) {
+                $w->where('ticket_code', 'like', "%{$token}%")
+                  ->orWhere('client_name', 'like', "%{$token}%")
+                  ->orWhere('troubleshoot_type', 'like', "%{$token}%")
+                  ->orWhere('description', 'like', "%{$token}%")
+                  ->orWhere('endereco', 'like', "%{$token}%")
+                  ->orWhere('bairro', 'like', "%{$token}%")
+                  ->orWhere('complemento', 'like', "%{$token}%")
+                  ->orWhere('cidade', 'like', "%{$token}%")
+                  ->orWhere('grupo', 'like', "%{$token}%")
+                  ->orWhere('uf', 'like', "%{$token}%")
+                  ->orWhere('steps', 'like', "%{$token}%")
+                  ->orWhere('details', 'like', "%{$token}%");
+            });
+        }
+    }
+
     $items = $query->latest()->limit(30)->get();
 
-    // Retorna só os campos necessários (evita poluição no front)
     return response()->json($items->map(function ($ts) {
         return [
             'id'          => $ts->id,
@@ -195,6 +203,26 @@ public function search(Request $request)
             'description' => $ts->description,
         ];
     }));
+}
+
+public function edit($id)
+{
+    $ts = Troubleshooting::findOrFail($id);
+    return response()->json([
+        'id' => $ts->id,
+        'ticket_code' => $ts->ticket_code,
+        'client_name' => $ts->client_name,
+        'troubleshoot_type' => $ts->troubleshoot_type,
+        'description' => $ts->description,
+        'endereco' => $ts->endereco,
+        'bairro' => $ts->bairro,
+        'complemento' => $ts->complemento,
+        'cidade' => $ts->cidade,
+        'grupo' => $ts->grupo,
+        'uf' => $ts->uf,
+        'steps' => $ts->steps,
+        'details' => json_decode($ts->details, true),
+    ]);
 }
 
 
