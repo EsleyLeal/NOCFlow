@@ -189,13 +189,19 @@
           <div class="accordion-body">
 
             <!-- Botão Excluir: só mostra se admin ou dono -->
-            @can('delete', $ts)
-              <div class="text-end mt-3">
-                <button class="btn btn-sm btn-danger btn-delete-ts" data-id="{{ $ts->id }}">
-                  Excluir
-                </button>
-              </div>
-            @endcan
+@can('delete', $ts)
+  <div class="text-end mt-3 d-flex justify-content-end gap-2">
+    <button class="btn btn-sm btn-success btn-copy-circuit" data-id="{{ $ts->id }}">
+      Copiar Circuito
+    </button>
+    <button class="btn btn-sm btn-danger btn-delete-ts" data-id="{{ $ts->id }}">
+      Excluir
+    </button>
+  </div>
+@endcan
+
+
+
 
             <!-- Cadastro do Cliente -->
             <h6 class="neon">Cadastro do Cliente</h6>
@@ -425,6 +431,49 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+// COPIAR CIRCUITO
+
+// Botão Copiar Circuito
+document.querySelectorAll('.btn-copy-circuit').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const accordionItem = btn.closest('.accordion-item');
+
+    // procura o título h6 que contém o texto
+    const h6s = accordionItem.querySelectorAll('h6.neon');
+    let table = null;
+
+    h6s.forEach(h6 => {
+      if (h6.textContent.trim() === "Informação de Circuito") {
+        // pega a tabela logo depois do h6
+        table = h6.nextElementSibling?.querySelector("table");
+      }
+    });
+
+    if (!table) {
+      alert("Nenhuma informação de circuito disponível.");
+      return;
+    }
+
+    // monta o texto formatado
+    let texto = "";
+    table.querySelectorAll('tbody tr').forEach(row => {
+      const cols = row.querySelectorAll('td, th');
+let linha = Array.from(cols)
+  .map(col => col.innerText.trim())
+  .filter(txt => txt && txt !== "-")   // remove vazio e "-"
+  .join(" | ");
+      texto += linha + "\n";
+    });
+
+    try {
+      await navigator.clipboard.writeText(texto.trim());
+      btn.innerText = "Copiado!";
+      setTimeout(() => btn.innerText = "Copiar Circuito", 1200);
+    } catch (e) {
+      alert("Não foi possível copiar.");
+    }
+  });
+});
 
 
 document.addEventListener("DOMContentLoaded", () => {
