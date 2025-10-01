@@ -8,6 +8,10 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+  
+  <script src="/js/template.js"></script>
+  <script src="/js/modelo.js"></script>
+
   <link rel="preconnect" href="https://fonts.bunny.net">
   <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,800" rel="stylesheet" />
 
@@ -89,6 +93,64 @@
 
   @include('reuse.header')
   @include('reuse.viewNovoTroubleshooting')
+
+
+
+<!-- Botão flutuante -->
+<button
+  id="btnTemplates"
+  class="btn btn-primary position-fixed"
+  style="bottom:70px; right:20px; z-index:2000;"
+  data-bs-toggle="modal"
+  data-bs-target="#templatesModal">
+  📧 Modelos de Email
+</button>
+
+<!-- Modal de Modelos -->
+<div class="modal fade" id="templatesModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header">
+        <h5 class="modal-title">Modelos de E-mails</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="templateSelector" class="mb-3"></div>
+        <div id="templatePreview" class="p-3 bg-secondary rounded" style="white-space:pre-wrap;"></div>
+        <button id="copyTemplate" class="btn btn-success mt-3">📋 Copiar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+ <!-- Botão flutuante (abre o modal) -->
+<button
+  id="btnNotes"
+  class="btn btn-success position-fixed"
+  style="bottom:20px; right:20px; z-index:2000;"
+  data-bs-toggle="modal"
+  data-bs-target="#notesModal">
+  📝 Notas
+</button>
+
+<!-- Modal de Notas -->
+<div class="modal fade" id="notesModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header">
+        <h5 class="modal-title">Minhas Anotações do Dia</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <textarea id="dailyNotes" class="form-control bg-dark text-light" rows="10"
+                  placeholder="Digite suas anotações aqui..."></textarea>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- HERO -->
   <section class="container-xxl py-4">
@@ -759,6 +821,50 @@ function salvarSteps(div, novoValor, original, id) {
     div.innerHTML = original.replace(/\n/g, "<br>");
   });
 }
+
+// Funcao de teste anotacoes, ainda em teste
+document.addEventListener("DOMContentLoaded", () => {
+  const textarea = document.getElementById("dailyNotes");
+  if (!textarea) return;
+
+  // chave por data (YYYY-MM-DD)
+  const today = new Date().toISOString().slice(0, 10);
+  const notesKey = `notes-${today}`;
+
+  // remove notas antigas (só mantém a do dia)
+  const toRemove = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith("notes-") && k !== notesKey) toRemove.push(k);
+  }
+  toRemove.forEach(k => localStorage.removeItem(k));
+
+  // carrega a nota do dia
+  const loadNotes = () => {
+    textarea.value = localStorage.getItem(notesKey) || "";
+  };
+  loadNotes();
+
+  // salva a cada digitação
+  textarea.addEventListener("input", () => {
+    localStorage.setItem(notesKey, textarea.value);
+  });
+
+  // se abrir o modal depois da meia-noite, recarrega o conteúdo
+  const modalEl = document.getElementById("notesModal");
+  modalEl.addEventListener("shown.bs.modal", loadNotes);
+
+  // sincroniza se editar em outra aba
+  window.addEventListener("storage", (e) => {
+    if (e.key === notesKey) textarea.value = e.newValue || "";
+  });
+});
+
+
+
+
+
+
 </script>
 
 
