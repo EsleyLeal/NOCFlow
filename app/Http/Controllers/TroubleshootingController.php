@@ -139,7 +139,9 @@ class TroubleshootingController extends Controller
         $troubleshooting->save();
     }
 
-    return response()->json(['success' => true], 200);
+   return redirect()->route('troubleshooting')
+                 ->with('success', 'Troubleshooting atualizado com sucesso!');
+
 }
 
 
@@ -208,22 +210,9 @@ public function search(Request $request)
 public function edit($id)
 {
     $ts = Troubleshooting::findOrFail($id);
-    return response()->json([
-        'id' => $ts->id,
-        'ticket_code' => $ts->ticket_code,
-        'client_name' => $ts->client_name,
-        'troubleshoot_type' => $ts->troubleshoot_type,
-        'description' => $ts->description,
-        'endereco' => $ts->endereco,
-        'bairro' => $ts->bairro,
-        'complemento' => $ts->complemento,
-        'cidade' => $ts->cidade,
-        'grupo' => $ts->grupo,
-        'uf' => $ts->uf,
-        'steps' => $ts->steps,
-        'details' => json_decode($ts->details, true),
-    ]);
+    return view('reuse.viewNovoTroubleshooting', compact('ts'));
 }
+
 
 
 }

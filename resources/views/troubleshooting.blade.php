@@ -8,9 +8,11 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  
+
   <script src="/js/template.js"></script>
   <script src="/js/modelo.js"></script>
+  <script src="/js/massivo.js"></script>
+
 
   <link rel="preconnect" href="https://fonts.bunny.net">
   <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,800" rel="stylesheet" />
@@ -89,35 +91,153 @@
 </head>
 <body class="compact">
 
-
-
   @include('reuse.header')
   @include('reuse.viewNovoTroubleshooting')
 
 
 
-<!-- Botão flutuante -->
+  <!-- Modal de Edição -->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content bg-dark text-light">
+        <div class="modal-header">
+          <h5 class="modal-title">Editar Troubleshooting</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="editFormContainer">
+          <!-- O formulário de edição será carregado via AJAX -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <!-- Botão flutuante (abre lista de Massivos salvos) -->
 <button
-  id="btnTemplates"
-  class="btn btn-primary position-fixed"
-  style="bottom:70px; right:20px; z-index:2000;"
+  id="btnMassivos"
+  class="btn btn-danger position-fixed"
+  style="bottom:170px; right:20px; z-index:2000;"
   data-bs-toggle="modal"
-  data-bs-target="#templatesModal">
-  📧 Modelos de Email
+  data-bs-target="#massivoListModal">
+  🔔 Massivos em Andamento (0)
 </button>
 
-<!-- Modal de Modelos -->
-<div class="modal fade" id="templatesModal" tabindex="-1" aria-hidden="true">
+<!-- Modal Lista de Massivos -->
+<div class="modal fade" id="massivoListModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header d-flex justify-content-between align-items-center">
+        <h5 class="modal-title">Massivos em Andamento</h5>
+        <div class="d-flex align-items-center gap-2">
+          <button id="clearMassivos" class="btn btn-danger btn-sm">🧹 Limpar todos</button>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+      </div>
+      <div class="modal-body" id="massivoListCompact">
+        <div class="muted">Nenhum massivo salvo.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Botão flutuante (abre modal de criação de Massivo) -->
+<button
+  id="btnMassivo"
+  class="btn btn-warning position-fixed"
+  style="bottom:120px; right:20px; z-index:2000;"
+  data-bs-toggle="modal"
+  data-bs-target="#massivoModal">
+  📋 Novo Massivo
+</button>
+
+
+
+
+  <!-- Botão flutuante -->
+  <button
+    id="btnTemplates"
+    class="btn btn-primary position-fixed"
+    style="bottom:70px; right:20px; z-index:2000;"
+    data-bs-toggle="modal"
+    data-bs-target="#templatesModal">
+    📧 Modelos de Email
+  </button>
+
+ <!-- Modal Massivo -->
+<div class="modal fade" id="massivoModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content bg-dark text-light">
       <div class="modal-header">
-        <h5 class="modal-title">Modelos de E-mails</h5>
+        <h5 class="modal-title">Gerar Lista Massiva</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <div id="templateSelector" class="mb-3"></div>
-        <div id="templatePreview" class="p-3 bg-secondary rounded" style="white-space:pre-wrap;"></div>
-        <button id="copyTemplate" class="btn btn-success mt-3">📋 Copiar</button>
+
+        <!-- Seleção da OLT -->
+        <div class="mb-3">
+          <label class="form-label">OLT</label>
+          <select id="oltSelect" class="form-select bg-dark text-light">
+            <option value="">-- Selecione --</option>
+            <option>DISTRITO - EPON - FIBERHOME</option>
+            <option>JPA - TAMBIA - FIBERHOME</option>
+            <option>CABEDELO - EPON - FIBERHOME</option>
+            <option>BESSA NORTE - FIBERHOME</option>
+            <option>BESSA SUL - FIBERHOME</option>
+            <option>TAMBÁU CABO BRANCO - FIBERHOME</option>
+            <option>TAMBÁU MANAÍRA - FIBERHOME</option>
+            <option>SEDE - FIBERHOME</option>
+            <option>MME A02 - FIBERHOME</option>
+            <option>MME PL - FIBERHOME</option>
+            <option>CAPIM - FIBERHOME</option>
+            <option>RIO TINTO - FIBERHOME</option>
+            <option>CAMPINA GRADE - FIBERHOME</option>
+            <option>PATOS - FIBERHOME</option>
+            <option>SEDE PATOS - FIBERHOME</option>
+            <option>BANCÁRIOS - HUAWEI</option>
+            <option>MANGABEIRA - HUAWEI</option>
+            <option>MANGABEIRA 02 - HUAWEI</option>
+            <option>BOSQUE - HUAWEI</option>
+            <option>DT - HUAWEI</option>
+            <option>CBD - HUAWEI</option>
+            <option>ALAMOANA - HUAWEI</option>
+          </select>
+        </div>
+
+        <!-- Campos Fiberhome -->
+        <div id="fiberhomeFields" class="mb-3" style="display:none;">
+          <label class="form-label">Slot</label>
+          <input type="text" id="fiberSlot" class="form-control bg-dark text-light mb-2">
+          <label class="form-label">PON</label>
+          <input type="text" id="fiberPon" class="form-control bg-dark text-light">
+        </div>
+
+        <!-- Campos Huawei -->
+        <div id="huaweiFields" class="mb-3" style="display:none;">
+          <label class="form-label">Frame</label>
+          <input type="text" id="huaweiFrame" class="form-control bg-dark text-light mb-2">
+          <label class="form-label">Slot</label>
+          <input type="text" id="huaweiSlot" class="form-control bg-dark text-light mb-2">
+          <label class="form-label">PON</label>
+          <input type="text" id="huaweiPon" class="form-control bg-dark text-light">
+        </div>
+
+        <!-- Horário -->
+        <div class="mb-3">
+          <label class="form-label">Horário da Queda</label>
+          <input type="time" id="horaQueda" class="form-control bg-dark text-light">
+        </div>
+
+        <!-- Lista -->
+        <textarea id="massivoInput" class="form-control bg-dark text-light" rows="8"
+          placeholder="Cole aqui a lista bruta da OLT..."></textarea>
+
+        <button id="processMassivo" class="btn btn-success mt-3">Gerar</button>
+
+        <h6 class="mt-4">Resultado:</h6>
+        <pre id="massivoOutput" class="bg-secondary p-3 rounded text-light" style="white-space:pre-wrap;"></pre>
+        <button id="copyMassivo" class="btn btn-primary mt-2">📋 Copiar</button>
+        <button id="saveMassivo" class="btn btn-warning mt-2">💾 Salvar Massivo</button>
+
       </div>
     </div>
   </div>
@@ -126,334 +246,215 @@
 
 
 
- <!-- Botão flutuante (abre o modal) -->
-<button
-  id="btnNotes"
-  class="btn btn-success position-fixed"
-  style="bottom:20px; right:20px; z-index:2000;"
-  data-bs-toggle="modal"
-  data-bs-target="#notesModal">
-  📝 Notas
-</button>
-
-<!-- Modal de Notas -->
-<div class="modal fade" id="notesModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content bg-dark text-light">
-      <div class="modal-header">
-        <h5 class="modal-title">Minhas Anotações do Dia</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <textarea id="dailyNotes" class="form-control bg-dark text-light" rows="10"
-                  placeholder="Digite suas anotações aqui..."></textarea>
+  <!-- Modal de Modelos -->
+  <div class="modal fade" id="templatesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content bg-dark text-light">
+        <div class="modal-header">
+          <h5 class="modal-title">Modelos de E-mails</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="templateSelector" class="mb-3"></div>
+          <div id="templatePreview" class="p-3 bg-secondary rounded" style="white-space:pre-wrap;"></div>
+          <button id="copyTemplate" class="btn btn-success mt-3">📋 Copiar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- Botão flutuante (abre o modal) -->
+  <button
+    id="btnNotes"
+    class="btn btn-success position-fixed"
+    style="bottom:20px; right:20px; z-index:2000;"
+    data-bs-toggle="modal"
+    data-bs-target="#notesModal">
+    📝 Notas
+  </button>
+
+  <!-- Modal de Notas -->
+  <div class="modal fade" id="notesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content bg-dark text-light">
+        <div class="modal-header">
+          <h5 class="modal-title">Minhas Anotações do Dia</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <textarea id="dailyNotes" class="form-control bg-dark text-light" rows="10"
+                    placeholder="Digite suas anotações aqui..."></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- HERO -->
   <section class="container-xxl py-4">
     <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
       <div>
-        <h1 class="neon mb-1" style="font:800 2rem/1.1 ui-monospace, Menlo, Consolas">Guia de Troubleshooting</h1>
+        <h1 class="neon mb-1" style="font:800 2rem/1.1 ui-monospace, Menlo, Consolas">
+          Guia de Troubleshooting
+        </h1>
         <p class="muted mb-0">Soluções para problemas comuns em redes</p>
       </div>
       <a class="btn-neon"
-   data-bs-toggle="collapse"
-   href="#formNovoTroubleshooting"
-   role="button"
-   aria-expanded="false"
-   aria-controls="formNovoTroubleshooting">
-  <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"/></svg>
-  Novo Troubleshoot
-</a>
-
+        data-bs-toggle="collapse"
+        href="#formNovoTroubleshooting"
+        role="button"
+        aria-expanded="false"
+        aria-controls="formNovoTroubleshooting">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"/>
+        </svg>
+        Novo Troubleshoot
+      </a>
     </div>
   </section>
 
   <!-- MÉTRICAS -->
   <section class="container-xxl pb-2">
-  <div class="row g-3">
-    <div class="col-md-4">
-      <div class="metric">
-        <div class="value neon">{{ $stats['total'] ?? 0 }}</div>
-        <div class="label">Total de Guias</div>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <div class="metric">
+          <div class="value neon">{{ $stats['total'] ?? 0 }}</div>
+          <div class="label">Total de Guias</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="metric">
+          <div class="value neon">{{ $stats['personalizados'] ?? 0 }}</div>
+          <div class="label">Personalizados</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="metric">
+          <div class="value neon">{{ $stats['padrao'] ?? 0 }}</div>
+          <div class="label">Padrão</div>
+        </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="metric">
-        <div class="value neon">{{ $stats['personalizados'] ?? 0 }}</div>
-        <div class="label">Personalizados</div>
-      </div>
+  </section>
+
+  <!-- PESQUISA -->
+  <div class="container-xxl mb-3 position-relative">
+    <div class="input-group">
+      <span class="input-group-text bg-dark text-light">🔍</span>
+      <input type="text" id="searchBox" class="form-control"
+            placeholder="Pesquisar por cliente, cidade, ticket, grupo...">
     </div>
-    <div class="col-md-4">
-      <div class="metric">
-        <div class="value neon">{{ $stats['padrao'] ?? 0 }}</div>
-        <div class="label">Padrão</div>
-      </div>
+    <div id="searchResults" class="list-group position-absolute w-100 shadow"
+        style="z-index:1050; max-height: 300px; overflow-y:auto; display:none;">
     </div>
   </div>
-</section>
 
-<div class="container-xxl mb-3 position-relative">
-  <div class="input-group">
-  <span class="input-group-text bg-dark text-light">🔍</span>
-  <input type="text" id="searchBox" class="form-control"
-         placeholder="Pesquisar por cliente, cidade, ticket, grupo...">
-</div>
+  <!-- ACORDEÃO (dinâmico) -->
+  <main class="container-xxl pb-5">
+    <div class="accordion accordion-dark" id="accTroubles">
+      @forelse($items as $ts)
+        @php
+          $hid = "h-ts-{$ts->id}";
+          $cid = "c-ts-{$ts->id}";
+          $steps = preg_split("/\r\n|\n|\r/", (string)($ts->steps ?? ''));
+          $steps = array_values(array_filter(array_map('trim', $steps), fn($s) => $s !== ''));
+        @endphp
 
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="{{ $hid }}">
+            <button class="accordion-button collapsed" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#{{ $cid }}"
+                    aria-expanded="false" aria-controls="{{ $cid }}">
+              <span class="badge-chip">TS</span>
+              <div>
+                <small class="muted">
+                  {{ strtoupper($ts->client_name ?? '-') }} - {{ strtoupper($ts->cidade ?? '-') }}
+                  | Criado por:
+                  {{ $ts->user?->isAdmin() ? 'Administrador' : ucfirst(explode(' ', $ts->user->nome ?? '-')[0]) }}
+                </small>
+              </div>
+            </button>
+          </h2>
 
+          <div id="{{ $cid }}" class="accordion-collapse collapse" aria-labelledby="{{ $hid }}" data-bs-parent="#accTroubles">
+            <div class="accordion-body">
 
+              @can('delete', $ts)
+                <div class="text-end mt-3 d-flex justify-content-end gap-2">
+                  <button class="btn btn-sm btn-success btn-copy-circuit" data-id="{{ $ts->id }}">
+                    Copiar Circuito
+                  </button>
+                  <button class="btn btn-sm btn-primary btn-edit-ts" data-id="{{ $ts->id }}">
+                    Editar
+                  </button>
+                  <button class="btn btn-sm btn-danger btn-delete-ts" data-id="{{ $ts->id }}">
+                    Excluir
+                  </button>
+                </div>
+              @endcan
 
-  <div id="searchResults" class="list-group position-absolute w-100 shadow"
-       style="z-index:1050; max-height: 300px; overflow-y:auto; display:none;">
-  </div>
-</div>
-
- <!-- ACORDEÃO (dinâmico) -->
-<main class="container-xxl pb-5">
-  <div class="accordion accordion-dark" id="accTroubles">
-
-    @forelse($items as $ts)
-      @php
-        $hid = "h-ts-{$ts->id}";
-        $cid = "c-ts-{$ts->id}";
-        $steps = preg_split("/\r\n|\n|\r/", (string)($ts->steps ?? ''));
-        $steps = array_values(array_filter(array_map('trim', $steps), fn($s) => $s !== ''));
-      @endphp
-
-      <div class="accordion-item">
-        <!-- Cabeçalho -->
-        <h2 class="accordion-header" id="{{ $hid }}">
-          <button class="accordion-button collapsed" type="button"
-                  data-bs-toggle="collapse" data-bs-target="#{{ $cid }}"
-                  aria-expanded="false" aria-controls="{{ $cid }}">
-            <span class="badge-chip">TS</span>
-           <div>
-  <small class="muted">
-    {{ strtoupper($ts->client_name ?? '-') }} - {{ strtoupper($ts->cidade ?? '-') }}
-    | Criado por:
-    @php
-        // pega o nome bruto (pode vir "esley.s", "Esley Santana", etc)
-        $raw = (string) ($ts->user->nome ?? '');
-
-        // quebra no primeiro separador: ponto, espaço ou underline
-        $token = preg_split('/[.\s_]+/u', trim($raw), 2)[0] ?? '';
-
-        // capitaliza corretamente (com acentos)
-        $firstName = $token !== ''
-            ? mb_strtoupper(mb_substr($token, 0, 1), 'UTF-8') . mb_strtolower(mb_substr($token, 1), 'UTF-8')
-            : '-';
-    @endphp
-    {{ $ts->user?->isAdmin() ? 'Administrador' : $firstName }}
-  </small>
-</div>
-
-          </button>
-        </h2>
-
-        <div id="{{ $cid }}" class="accordion-collapse collapse" aria-labelledby="{{ $hid }}" data-bs-parent="#accTroubles">
-          <div class="accordion-body">
-
-            <!-- Botão Excluir: só mostra se admin ou dono -->
-@can('delete', $ts)
-  <div class="text-end mt-3 d-flex justify-content-end gap-2">
-    <button class="btn btn-sm btn-success btn-copy-circuit" data-id="{{ $ts->id }}">
-      Copiar Circuito
-    </button>
-
-    {{-- <button class="btn btn-sm btn-primary btn-edit-ts" data-id="{{ $ts->id }}">
-      Editar
-    </button> --}}
-
-    <button class="btn btn-sm btn-danger btn-delete-ts" data-id="{{ $ts->id }}">
-      Excluir
-    </button>
-  </div>
-@endcan
-
-
-
-
-            <!-- Cadastro do Cliente -->
-            <h6 class="neon">Cadastro do Cliente</h6>
-            <div class="mb-3">
-              <table class="table table-sm table-dark table-bordered align-middle">
-                <tbody>
-                  <tr>
-                    <th style="width: 180px;">Código do Chamado</th>
-                    <td class="editable" data-id="{{ $ts->id }}" data-field="ticket_code">
-                      {{ $ts->ticket_code ? strtoupper($ts->ticket_code) : '-' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Cliente</th>
-                    <td class="editable" data-id="{{ $ts->id }}" data-field="client_name">
-                      {{ $ts->client_name ? strtoupper($ts->client_name) : '-' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Endereço</th>
-                    <td class="editable" data-id="{{ $ts->id }}" data-field="endereco">
-                      {{ $ts->endereco ? strtoupper($ts->endereco) : '-' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Bairro</th>
-                    <td class="editable" data-id="{{ $ts->id }}" data-field="bairro">
-                      {{ $ts->bairro ? strtoupper($ts->bairro) : '-' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Complemento</th>
-                    <td class="editable" data-id="{{ $ts->id }}" data-field="complemento">
-                      {{ $ts->complemento ? strtoupper($ts->complemento) : '-' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Cidade</th>
-                    <td class="editable" data-id="{{ $ts->id }}" data-field="cidade">
-                      {{ $ts->cidade ? strtoupper($ts->cidade) : '-' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Grupo</th>
-                    <td class="editable" data-id="{{ $ts->id }}" data-field="grupo">
-                      {{ $ts->grupo ? strtoupper($ts->grupo) : '-' }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>UF</th>
-                    <td class="editable" data-id="{{ $ts->id }}" data-field="uf">
-                      {{ $ts->uf ? strtoupper($ts->uf) : '-' }}
-                    </td>
-                  </tr>
-                  <tr>
-  <th>Tipo de Contrato</th>
-  <td class="editable" data-id="{{ $ts->id }}" data-field="troubleshoot_type">
-    {{ $ts->troubleshoot_type ? strtoupper($ts->troubleshoot_type) : '-' }}
-  </td>
-</tr>
-<tr>
-  <th>Relato</th>
-  <td class="editable" data-id="{{ $ts->id }}" data-field="description">
-    {{ $ts->description ? strtoupper($ts->description) : '-' }}
-  </td>
-</tr>
-
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Informação de Circuito -->
-            @if($ts->details && count(json_decode($ts->details, true)) > 0)
-              <h6 class="neon">Informação de Circuito</h6>
-              <div class="table-responsive mb-3">
-                <table class="table table-sm table-dark table-striped table-bordered align-middle">
-                  <thead>
-                    <tr>
-                      <th style="width: 120px;">Campo</th>
-                      <th>Valor</th>
-                      <th style="width: 160px;">Fabricante</th>
-                      <th>Observações</th>
-                    </tr>
-                  </thead>
+              <!-- Cadastro do Cliente -->
+              <h6 class="neon">Cadastro do Cliente</h6>
+              <div class="mb-3">
+                <table class="table table-sm table-dark table-bordered align-middle">
                   <tbody>
-  @foreach(json_decode($ts->details, true) as $key => $entries)
-    @foreach($entries as $entry)
-      @php
-        $value  = is_array($entry) ? ($entry['value'] ?? '') : $entry;
-        $vendor = is_array($entry) ? ($entry['vendor'] ?? '') : '';
-        $notes  = is_array($entry) ? ($entry['notes'] ?? '') : '';
-        $hasLink = fn($txt) => Str::contains($txt, ['http://', 'https://']);
-      @endphp
-
-      @if(!empty($value) || !empty($vendor) || !empty($notes))
-        <tr>
-          <td class="fw-bold text-uppercase">{{ strtoupper($key) }}</td>
-
-          <!-- VALUE -->
-          <td class="editable-detail"
-              data-id="{{ $ts->id }}"
-              data-key="{{ $key }}"
-              data-subfield="value"
-              data-value="{{ $value }}">
-            @if($hasLink($value))
-              <div class="d-flex align-items-center gap-2">
-                <span class="text-truncate" style="max-width:220px;">{{ $value }}</span>
-                <a href="{{ $value }}" target="_blank" class="btn btn-sm btn-primary">Abrir</a>
-              </div>
-            @else
-              {{ $value ? strtoupper($value) : '-' }}
-            @endif
-          </td>
-
-          <!-- VENDOR -->
-          <td class="editable-detail"
-              data-id="{{ $ts->id }}"
-              data-key="{{ $key }}"
-              data-subfield="vendor"
-              data-value="{{ $vendor }}">
-            @if($hasLink($vendor))
-              <div class="d-flex align-items-center gap-2">
-                <span class="text-truncate" style="max-width:220px;">{{ $vendor }}</span>
-                <a href="{{ $vendor }}" target="_blank" class="btn btn-sm btn-primary">Abrir</a>
-              </div>
-            @else
-              {{ $vendor ? strtoupper($vendor) : '-' }}
-            @endif
-          </td>
-
-          <!-- NOTES -->
-          <td class="editable-detail"
-              data-id="{{ $ts->id }}"
-              data-key="{{ $key }}"
-              data-subfield="notes"
-              data-value="{{ $notes }}">
-            @if($hasLink($notes))
-              <div class="d-flex align-items-center gap-2">
-                <span class="text-truncate" style="max-width:220px;">{{ $notes }}</span>
-                <a href="{{ $notes }}" target="_blank" class="btn btn-sm btn-primary">Abrir</a>
-              </div>
-            @else
-              {{ $notes ? strtoupper($notes) : '-' }}
-            @endif
-          </td>
-        </tr>
-      @endif
-    @endforeach
-  @endforeach
-</tbody>
-
+                    <tr><th style="width: 180px;">Código do Chamado</th><td>{{ strtoupper($ts->ticket_code ?? '-') }}</td></tr>
+                    <tr><th>Cliente</th><td>{{ strtoupper($ts->client_name ?? '-') }}</td></tr>
+                    <tr><th>Endereço</th><td>{{ strtoupper($ts->endereco ?? '-') }}</td></tr>
+                    <tr><th>Bairro</th><td>{{ strtoupper($ts->bairro ?? '-') }}</td></tr>
+                    <tr><th>Complemento</th><td>{{ strtoupper($ts->complemento ?? '-') }}</td></tr>
+                    <tr><th>Cidade</th><td>{{ strtoupper($ts->cidade ?? '-') }}</td></tr>
+                    <tr><th>Grupo</th><td>{{ strtoupper($ts->grupo ?? '-') }}</td></tr>
+                    <tr><th>UF</th><td>{{ strtoupper($ts->uf ?? '-') }}</td></tr>
+                    <tr><th>Tipo de Contrato</th><td>{{ strtoupper($ts->troubleshoot_type ?? '-') }}</td></tr>
+                    <tr><th>Relato</th><td>{{ strtoupper($ts->description ?? '-') }}</td></tr>
+                  </tbody>
                 </table>
               </div>
 
-              <!-- Botão para adicionar novo campo -->
+              <!-- Informação de Circuito -->
+              @if($ts->details && count(json_decode($ts->details, true)) > 0)
+                <h6 class="neon">Informação de Circuito</h6>
+                <div class="table-responsive mb-3">
+                  <table class="table table-sm table-dark table-striped table-bordered align-middle">
+                    <thead><tr><th>Campo</th><th>Valor</th><th>Fabricante</th><th>Observações</th></tr></thead>
+                    <tbody>
+                      @foreach(json_decode($ts->details, true) as $key => $entries)
+                        @foreach($entries as $entry)
+                          @php
+                            $value  = is_array($entry) ? ($entry['value'] ?? '') : $entry;
+                            $vendor = is_array($entry) ? ($entry['vendor'] ?? '') : '';
+                            $notes  = is_array($entry) ? ($entry['notes'] ?? '') : '';
+                          @endphp
+                          @if($value || $vendor || $notes)
+                            <tr>
+                              <td class="fw-bold text-uppercase">{{ $key }}</td>
+                              <td>{{ $value ?: '-' }}</td>
+                              <td>{{ $vendor ?: '-' }}</td>
+                              <td>{{ $notes ?: '-' }}</td>
+                            </tr>
+                          @endif
+                        @endforeach
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+              @endif
 
-
-            @endif
-
-            <!-- Ocorrência -->
-            @if(!empty($ts->steps))
-              <h6 class="neon">O que foi feito para resolução do Troubleshooting</h6>
-              <div class="editable-steps text-white bg-dark p-3 rounded"
-                   data-id="{{ $ts->id }}">
-                {!! nl2br(e(strtoupper($ts->steps))) !!}
-              </div>
-            @endif
-
+              <!-- Ocorrência -->
+              @if(!empty($ts->steps))
+                <h6 class="neon">O que foi feito para resolução do Troubleshooting</h6>
+                <div class="text-white bg-dark p-3 rounded">
+                  {!! nl2br(e(strtoupper($ts->steps))) !!}
+                </div>
+              @endif
+            </div>
           </div>
         </div>
-      </div>
-    @empty
-      <div class="text-center muted py-5">Nenhum troubleshooting cadastrado.</div>
-    @endforelse
-
-
-
-  </div>
-</main>
+      @empty
+        <div class="text-center muted py-5">Nenhum troubleshooting cadastrado.</div>
+      @endforelse
+    </div>
+  </main>
 
 
  @include('reuse.footer')
@@ -861,7 +862,25 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+// teste
 
+
+document.querySelectorAll('.btn-edit-ts').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.dataset.id;
+
+    fetch(`/troubleshooting/${id}/edit`)
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("editFormContainer").innerHTML = html;
+
+        // abre o modal
+        const modal = new bootstrap.Modal(document.getElementById("editModal"));
+        modal.show();
+      })
+      .catch(() => alert("Erro ao carregar formulário de edição."));
+  });
+});
 
 
 
