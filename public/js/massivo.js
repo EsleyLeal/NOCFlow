@@ -102,69 +102,89 @@ document.addEventListener("DOMContentLoaded", () => {
   // salvar / listar massivos
   // =========================
   function renderMassivos() {
-    const data = JSON.parse(localStorage.getItem("massivos") || "[]");
+  const data = JSON.parse(localStorage.getItem("massivos") || "[]");
+  if (!list) return;
 
-    if (!list) return; // se não tiver container, não quebra nada
+  list.innerHTML = "";
+  if (data.length === 0) {
+    list.innerHTML = `<div class="muted">Nenhum massivo salvo.</div>`;
+    if (btnMassivos) btnMassivos.textContent = "🔔 Massivos em Andamento (0)";
+    return;
+  }
 
-    list.innerHTML = "";
-    if (data.length === 0) {
-      list.innerHTML = `<div class="muted">Nenhum massivo salvo.</div>`;
-      if (btnMassivos) btnMassivos.textContent = "🔔 Massivos em Andamento (0)";
-      return;
-    }
+  const emEspera = data.filter(m => m.status === "espera").length;
+  if (btnMassivos) btnMassivos.textContent = `🔔 Massivos em Andamento (${emEspera})`;
 
-    const emEspera = data.filter(m => m.status === "espera").length;
-    if (btnMassivos) btnMassivos.textContent = `🔔 Massivos em Andamento (${emEspera})`;
+  data.forEach((m, idx) => {
+    const linhas = m.text.split("\n").filter(Boolean);
+    const cabecalho = linhas.slice(0, 2).join("\n"); // 1ª: OLT, 2ª: horário
+    const resto = linhas.slice(2).join("\n");
+    const temDetalhes = resto.trim().length > 0;
 
-    data.forEach((m, idx) => {
-      const card = document.createElement("div");
-      card.className = `p-3 rounded border mb-2 ${
-        m.status === "espera" ? "border-warning text-warning" : "border-success text-success"
-      }`;
-      card.innerHTML = `
-        <div class="d-flex justify-content-between align-items-center">
-          <div style="white-space:pre-wrap">${m.text}</div>
-          <div>
-            ${
-              m.status === "espera"
-                ? `<button class="btn btn-sm btn-success finalizar" data-idx="${idx}">Finalizar</button>`
-                : `<span class="badge bg-success">Finalizado</span>`
-            }
-          </div>
+    const card = document.createElement("div");
+    card.className = `p-3 rounded border mb-2 ${
+      m.status === "espera" ? "border-warning text-warning" : "border-success text-success"
+    }`;
+    card.innerHTML = `
+      <div class="d-flex justify-content-between align-items-center">
+        <div style="white-space:pre-wrap">${cabecalho}</div>
+        <div class="d-flex gap-2">
+          ${
+            m.status === "espera"
+              ? `
+                 ${temDetalhes ? `<button class="btn btn-sm btn-info toggle" data-idx="${idx}">⬇️ Expandir</button>` : ""}
+                 <button class="btn btn-sm btn-success finalizar" data-idx="${idx}">Finalizar</button>
+                `
+              : `<span class="badge bg-success">Finalizado</span>`
+          }
         </div>
-      `;
-      list.appendChild(card);
+      </div>
+      <pre class="detalhes mt-2" style="display:none; white-space:pre-wrap">${resto}</pre>
+    `;
+    list.appendChild(card);
+  });
+
+  // expandir/recolher (agora buscando a partir do card correto)
+  document.querySelectorAll(".toggle").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const wrapper = btn.closest(".p-3");            // o card inteiro
+      const detalhes = wrapper.querySelector(".detalhes");
+      if (!detalhes) return;
+      const oculto = detalhes.style.display === "none";
+      detalhes.style.display = oculto ? "block" : "none";
+      btn.textContent = oculto ? "⬆️ Recolher" : "⬇️ Expandir";
     });
+  });
 
-    document.querySelectorAll(".finalizar").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const data = JSON.parse(localStorage.getItem("massivos") || "[]");
-        const idx = parseInt(btn.dataset.idx, 10);
-        if (data[idx]) {
-          const primeiraLinha = data[idx].text.split("\n")[0];
-          const partes = primeiraLinha.split("-").map(p => p.trim());
-          const nomeLimpo = partes.length >= 2 ? `${partes[0]} ${partes[1]}` : partes[0];
-          const frase = `Massivo de ${nomeLimpo} finalizado, aqueles que ainda estão fora, devem ser tratados como isolados.`;
+  // finalizar (mantida a lógica + confirmação e remoção do storage)
+  document.querySelectorAll(".finalizar").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const data = JSON.parse(localStorage.getItem("massivos") || "[]");
+      const idx = parseInt(btn.dataset.idx, 10);
+      if (data[idx]) {
+        const primeiraLinha = data[idx].text.split("\n")[0];
+        const partes = primeiraLinha.split("-").map(p => p.trim());
+        const nomeLimpo = partes.length >= 2 ? `${partes[0]} ${partes[1]}` : partes[0];
+        const frase = `Massivo de ${nomeLimpo} finalizado, aqueles que ainda estão fora, devem ser tratados como isolados.`;
 
-          const card = btn.closest(".d-flex").parentElement;
-          card.innerHTML = `
-            <div class="mb-2">${frase}</div>
+        const card = btn.closest(".p-3");
+        card.innerHTML = `
+          <div class="mb-2">${frase}</div>
+          <div class="d-flex gap-2">
             <button class="btn btn-sm btn-primary copiar-frase">📋 Copiar frase</button>
             <button class="btn btn-sm btn-success confirmar-finalizar" data-idx="${idx}">✅ Confirmar finalização</button>
-          `;
+          </div>
+        `;
 
-          card.querySelector(".copiar-frase").addEventListener("click", () => {
-            navigator.clipboard.writeText(frase);
-          });
+        card.querySelector(".copiar-frase").addEventListener("click", () => {
+          navigator.clipboard.writeText(frase);
+        });
 
-          card.querySelector(".confirmar-finalizar").addEventListener("click", () => {
-            let data = JSON.parse(localStorage.getItem("massivos") || "[]");
-            const idx2 = parseInt(btn.dataset.idx, 10);
-            if (data[idx2]) {
-              data.splice(idx2, 1);
-              localStorage.setItem("massivos", JSON.stringify(data));
-            }
-            renderMassivos();
+        card.querySelector(".confirmar-finalizar").addEventListener("click", () => {
+          let data = JSON.parse(localStorage.getItem("massivos") || "[]");
+          data.splice(idx, 1);
+          localStorage.setItem("massivos", JSON.stringify(data));
+          renderMassivos();
           });
         }
       });
