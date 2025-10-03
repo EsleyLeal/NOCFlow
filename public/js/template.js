@@ -26,7 +26,7 @@ Estarei encerrando o chamado aberto.
   `,
 
   "ONU DESLIGADA": `
-Prezados, bom dia!
+Prezados, [SAUDACAO]!
 
 Identificamos em nosso monitoramento uma indisponibilidade na unidade.
 Identificamos que a ONU se encontra desligada, ou seja, um possível problema elétrico no local.
@@ -93,7 +93,40 @@ Atenciosamente,`,
 ➢ Nome do Solicitante via sz: [NOME]
 ➢ Contato via sz: [CONTATO]
 ➢ Relato do cliente: [RELATO]
+`,
+
+"GOV INDISPONIBILIDADE": `
+
+Prezados, [SAUDACAO].
+
+
+Estamos sem comunicação com o nosso equipamento no local. Poderia validar se o CPE está devidamente energizado, por gentileza?
+
+Ficamos no aguardo da sua resposta para prosseguirmos com a tratativa.
+
+
+Atenciosamente,
+`,
+
+"GOV INDISPONIBILIDADE (QUANDO NÃO RESPONDEM)": `
+
+Prezados, [SAUDACAO].
+
+Seguimos no aguardo de um retorno referente ao estado dos equipamentos no local. Poderiam validar se os nosso equipamentos estão devidamente energizados, por gentileza?
+
+Ficamos no aguardo da sua resposta para prosseguirmos com a tratativa.
+
+Atenciosamente,
+`,
+
+"CNPJ TELY": `
+CNPJ Tely : 06.346.446.0001-59
 `
+
+
+
+
+
 
 
 };
