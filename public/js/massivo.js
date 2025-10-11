@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let candidato = "";
     const idxOnu = cols.findIndex(c => /OnuID\d+/i.test(c));
     if (idxOnu !== -1 && idxOnu + 1 < cols.length) candidato = cols[idxOnu + 1];
-    if (!candidato && cols.length >= 2 && /^(DYINGGASP|LINK LOSS)$/i.test(cols[0])) candidato = cols[1];
+    if (!candidato && cols.length >= 2 && /^(DYINGGASP|LINK LOSS|OFF LINE|ON LINE)$/i.test(cols[0])) candidato = cols[1];
     if (!candidato && cols.length) {
       const possivel = cols.find(c =>
         !/^(Activate|Initial|True|False|Unknown|--|OTHER_|EG\d|V\d|LINE\-VLAN|SRV\-VLAN|alarm\-policy|BAC_PPPoE|OLT\-|Frame\d|Slot\d|Port\d|Auto)$/i.test(c)

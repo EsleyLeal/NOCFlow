@@ -121,12 +121,62 @@ Atenciosamente,
 
 "CNPJ TELY": `
 CNPJ Tely : 06.346.446.0001-59
-`
+`,
+
+"GOV - UPTIME NAO REINICIADO": `
+
+Estavamos com uma indisponibilidade no link de [ORG].
+
+
+O link retornou sem uptime reiniciado, poderiam nos informar a causa da indisponibilidade e a tratativa, por gentileza ?
+
+
+VLANS : [VLAN]
+
+
+CNPJ TELY: 06.346.446.0001-59
 
 
 
+Atenciosamente,
+NOC TELY.
+`,
+
+"CLIENTE DESLIGOU O CPE": `
+
+Prezados, [SAUDACAO]!
+
+Tendo em vista que houve confirmação por parte dos responsáveis informando que o equipamento está desligado, estamos encerrando o chamado. Caso os senhores retorne, abriremos outro chamado.
 
 
+Atenciosamente,
+NOC Tely
+`,
+
+"PROBLEMA NO POP DO PARCEIRO": `
+
+Prezados,
+
+Informamos que o chamado foi encerrado. Seguem os detalhes do incidente:
+
+Motivo: Ocorrência de problema elétrico no POP que atende a unidade.
+
+
+Data e hora do incidente: [DATA]
+
+
+Ação: Após a correção do problema elétrico, os serviços foram restabelecidos.
+
+
+Data e hora da normalização: [DATA].
+
+
+Permanecemos à disposição para quaisquer esclarecimentos.
+
+Atenciosamente,
+NOC Tely
+
+`,
 
 
 };
