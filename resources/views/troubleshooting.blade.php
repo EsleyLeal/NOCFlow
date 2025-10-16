@@ -185,7 +185,7 @@
             <option>BESSA SUL - FIBERHOME</option>
             <option>TAMBÁU CABO BRANCO - FIBERHOME</option>
             <option>TAMBÁU MANAÍRA - FIBERHOME</option>
-            <option>SEDE - FIBERHOME</option>
+            <option>SEDE NOVO- FIBERHOME</option>
             <option>MME A02 - FIBERHOME</option>
             <option>MME PL - FIBERHOME</option>
             <option>CAPIM - FIBERHOME</option>
@@ -341,7 +341,7 @@
     <div class="input-group">
       <span class="input-group-text bg-dark text-light">🔍</span>
       <input type="text" id="searchBox" class="form-control"
-            placeholder="Pesquisar por cliente, cidade, ticket, grupo...">
+            placeholder="Pesquisar por cliente, cidade, pe, porta...">
     </div>
     <div id="searchResults" class="list-group position-absolute w-100 shadow"
         style="z-index:1050; max-height: 300px; overflow-y:auto; display:none;">
@@ -350,111 +350,47 @@
 
   <!-- ACORDEÃO (dinâmico) -->
   <main class="container-xxl pb-5">
-    <div class="accordion accordion-dark" id="accTroubles">
-      @forelse($items as $ts)
-        @php
-          $hid = "h-ts-{$ts->id}";
-          $cid = "c-ts-{$ts->id}";
-          $steps = preg_split("/\r\n|\n|\r/", (string)($ts->steps ?? ''));
-          $steps = array_values(array_filter(array_map('trim', $steps), fn($s) => $s !== ''));
-        @endphp
+  <div class="row g-4">
+    @forelse($items as $ts)
+      <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+        <div class="card bg-dark text-light border-secondary shadow-sm h-100"
+             style="border-radius:1rem; min-height:240px; display:flex; flex-direction:column; justify-content:space-between;">
 
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="{{ $hid }}">
-            <button class="accordion-button collapsed" type="button"
-                    data-bs-toggle="collapse" data-bs-target="#{{ $cid }}"
-                    aria-expanded="false" aria-controls="{{ $cid }}">
-              <span class="badge-chip">TS</span>
-              <div>
-                <small class="muted">
-                  {{ strtoupper($ts->client_name ?? '-') }} - {{ strtoupper($ts->cidade ?? '-') }}
-                  | Criado por:
-                  {{ $ts->user?->isAdmin() ? 'Administrador' : ucfirst(explode(' ', $ts->user->nome ?? '-')[0]) }}
-                </small>
-              </div>
-            </button>
-          </h2>
+          <!-- Cabeçalho -->
+          <div class="p-3">
+            <div class="fw-bold mb-2" style="line-height:1.2;">
+  <span style="color:#39ff14;">{{ strtoupper($ts->nome ?? '-') }}</span><br>
+  <span style="color:#00bfff;">{{ strtoupper($ts->cidade ?? '-') }}</span>
+  <span style="color:#66c2ff;">- {{ strtoupper($ts->avenida ?? '-') }}</span><br>
+  <span style="color:#facc15;">{{ strtoupper($ts->complemento ?? '-') }}</span>
+</div>
 
-          <div id="{{ $cid }}" class="accordion-collapse collapse" aria-labelledby="{{ $hid }}" data-bs-parent="#accTroubles">
-            <div class="accordion-body">
-
-              @can('delete', $ts)
-                <div class="text-end mt-3 d-flex justify-content-end gap-2">
-                  <button class="btn btn-sm btn-success btn-copy-circuit" data-id="{{ $ts->id }}">
-                    Copiar Circuito
-                  </button>
-                  <button class="btn btn-sm btn-primary btn-edit-ts" data-id="{{ $ts->id }}">
-                    Editar
-                  </button>
-                  <button class="btn btn-sm btn-danger btn-delete-ts" data-id="{{ $ts->id }}">
-                    Excluir
-                  </button>
-                </div>
-              @endcan
-
-              <!-- Cadastro do Cliente -->
-              <h6 class="neon">Cadastro do Cliente</h6>
-              <div class="mb-3">
-                <table class="table table-sm table-dark table-bordered align-middle">
-                  <tbody>
-                    <tr><th style="width: 180px;">Código do Chamado</th><td>{{ strtoupper($ts->ticket_code ?? '-') }}</td></tr>
-                    <tr><th>Cliente</th><td>{{ strtoupper($ts->client_name ?? '-') }}</td></tr>
-                    <tr><th>Endereço</th><td>{{ strtoupper($ts->endereco ?? '-') }}</td></tr>
-                    <tr><th>Bairro</th><td>{{ strtoupper($ts->bairro ?? '-') }}</td></tr>
-                    <tr><th>Complemento</th><td>{{ strtoupper($ts->complemento ?? '-') }}</td></tr>
-                    <tr><th>Cidade</th><td>{{ strtoupper($ts->cidade ?? '-') }}</td></tr>
-                    <tr><th>Grupo</th><td>{{ strtoupper($ts->grupo ?? '-') }}</td></tr>
-                    <tr><th>UF</th><td>{{ strtoupper($ts->uf ?? '-') }}</td></tr>
-                    <tr><th>Tipo de Contrato</th><td>{{ strtoupper($ts->troubleshoot_type ?? '-') }}</td></tr>
-                    <tr><th>Relato</th><td>{{ strtoupper($ts->description ?? '-') }}</td></tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- Informação de Circuito -->
-              @if($ts->details && count(json_decode($ts->details, true)) > 0)
-                <h6 class="neon">Informação de Circuito</h6>
-                <div class="table-responsive mb-3">
-                  <table class="table table-sm table-dark table-striped table-bordered align-middle">
-                    <thead><tr><th>Campo</th><th>Valor</th><th>Fabricante</th><th>Observações</th></tr></thead>
-                    <tbody>
-                      @foreach(json_decode($ts->details, true) as $key => $entries)
-                        @foreach($entries as $entry)
-                          @php
-                            $value  = is_array($entry) ? ($entry['value'] ?? '') : $entry;
-                            $vendor = is_array($entry) ? ($entry['vendor'] ?? '') : '';
-                            $notes  = is_array($entry) ? ($entry['notes'] ?? '') : '';
-                          @endphp
-                          @if($value || $vendor || $notes)
-                            <tr>
-                              <td class="fw-bold text-uppercase">{{ $key }}</td>
-                              <td>{{ $value ?: '-' }}</td>
-                              <td>{{ $vendor ?: '-' }}</td>
-                              <td>{{ $notes ?: '-' }}</td>
-                            </tr>
-                          @endif
-                        @endforeach
-                      @endforeach
-                    </tbody>
-                  </table>
-                </div>
-              @endif
-
-              <!-- Ocorrência -->
-              @if(!empty($ts->steps))
-                <h6 class="neon">O que foi feito para resolução do Troubleshooting</h6>
-                <div class="text-white bg-dark p-3 rounded">
-                  {!! nl2br(e(strtoupper($ts->steps))) !!}
-                </div>
-              @endif
+            <div class="small">
+              <strong>CPE:</strong> {{ strtoupper($ts->cpe ?? '-') }}<br>
+              <strong>PE:</strong> {{ strtoupper($ts->pe ?? '-') }}<br>
+              <strong>PORTA:</strong> {{ strtoupper($ts->porta ?? '-') }}
+            </div>
+            <div class="small mt-2">
+              <strong style="color:#ffcc00;">PARCEIRO:</strong> {{ strtoupper($ts->parceiro ?? '-') }}<br>
+              <strong style="color:#ffcc00;">VLANS:</strong> {{ strtoupper($ts->vlans ?? '-') }}<br>
+              <strong style="color:#ffcc00;">PÚBLICO:</strong> {{ strtoupper($ts->publico ?? '-') }}
             </div>
           </div>
+
+          <!-- Rodapé -->
+          <div class="p-3 border-top border-secondary d-flex justify-content-end gap-2">
+            <button class="btn btn-sm btn-success btn-copy-circuit" data-id="{{ $ts->id }}">Copiar</button>
+            <button class="btn btn-sm btn-primary btn-edit-ts" data-id="{{ $ts->id }}">Editar</button>
+            <button class="btn btn-sm btn-danger btn-delete-ts" data-id="{{ $ts->id }}">Excluir</button>
+          </div>
         </div>
-      @empty
-        <div class="text-center muted py-5">Nenhum troubleshooting cadastrado.</div>
-      @endforelse
-    </div>
-  </main>
+      </div>
+    @empty
+      <div class="text-center muted py-5">Nenhum troubleshooting cadastrado.</div>
+    @endforelse
+  </div>
+</main>
+
 
 
  @include('reuse.footer')
@@ -482,52 +418,70 @@ document.addEventListener("DOMContentLoaded", () => {
             fetch(`/troubleshooting/search?q=${encodeURIComponent(q)}`)
                 .then(res => res.json())
                 .then(data => {
-                    resultsDiv.innerHTML = "";
-                    if (data.length === 0) {
-                        resultsDiv.style.display = "block";
-                        resultsDiv.innerHTML = `<div class="list-group-item text-muted">Nenhum resultado</div>`;
-                        return;
-                    }
+  resultsDiv.innerHTML = "";
+  if (data.length === 0) {
+    resultsDiv.style.display = "block";
+    resultsDiv.innerHTML = `<div class="list-group-item text-muted">Nenhum resultado encontrado</div>`;
+    return;
+  }
 
-                    data.forEach(item => {
-                        const el = document.createElement("a");
-                        el.href = `#c-ts-${item.id}`;
-                        el.className = "list-group-item list-group-item-action";
-                        el.innerHTML = `
-                            <div><strong>${item.client_name ?? '-'}</strong> (${item.ticket_code ?? '-'})</div>
-                            <small>${item.cidade ?? ''} ${item.uf ?? ''} | ${item.grupo ?? ''}</small><br>
-                            <small class="text-muted">${item.description ?? ''}</small>
-                        `;
+  data.forEach(item => {
+    const el = document.createElement("a");
+    el.href = `#c-ts-${item.id}`;
+    el.className = "list-group-item list-group-item-action bg-dark text-light border-secondary";
 
-                        // Clique abre o acordeão e faz scroll
-                        el.addEventListener("click", (e) => {
-                            e.preventDefault();
+    el.innerHTML = `
+      <div>
+        <span style="color:#39ff14; font-weight:600;">
+          ${(item.nome ?? '-').toUpperCase()}
+        </span>
+        -
+        <span style="color:#00bfff; font-weight:500;">
+          ${(item.cidade ?? '-').toUpperCase()}
+        </span>
+        -
+        ${(item.avenida ?? '-').toUpperCase()}
+        -
+        <span style="color:#ffcc00; font-weight:500;">
+          ${(item.complemento ?? '-').toUpperCase()}
+        </span>
+      </div>
+      <div class="small mt-1">
+        <span style="color:#00bfff;">CPE:</span> ${item.cpe ?? '-'} |
+        <span style="color:#00bfff;">PE:</span> ${item.pe ?? '-'} |
+        <span style="color:#00bfff;">PORTA:</span> ${item.porta ?? '-'} |
+        <span style="color:#00bfff;">PARCEIRO:</span> ${item.parceiro ?? '-'}
+      </div>
+    `;
 
-                            // Fecha todos os abertos
-                            document.querySelectorAll('.accordion-collapse.show')
-                                .forEach(c => c.classList.remove('show'));
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
 
-                            const target = document.querySelector(`#c-ts-${item.id}`);
-                            if (target) {
-                                target.classList.add('show');
-                                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      resultsDiv.style.display = "none";
+      resultsDiv.innerHTML = "";
+      searchBox.value = "";
 
-                                const headerBtn = target.closest('.accordion-item').querySelector('.accordion-button');
-                                if (headerBtn && headerBtn.classList.contains('collapsed')) {
-                                    headerBtn.classList.remove('collapsed');
-                                }
-                            }
+      document.querySelectorAll('.accordion-collapse.show')
+        .forEach(c => c.classList.remove('show'));
 
-                            resultsDiv.style.display = "none";
-                            resultsDiv.innerHTML = "";
-                            searchBox.value = "";
-                        });
+      const target = document.querySelector(`#c-ts-${item.id}`);
+      if (target) {
+        target.classList.add('show');
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-                        resultsDiv.appendChild(el);
-                    });
+        const headerBtn = target.closest('.accordion-item').querySelector('.accordion-button');
+        if (headerBtn && headerBtn.classList.contains('collapsed')) {
+          headerBtn.classList.remove('collapsed');
+        }
+      }
+    });
 
-                    resultsDiv.style.display = "block";
-                })
+    resultsDiv.appendChild(el);
+  });
+
+  resultsDiv.style.display = "block";
+})
+
                 .catch(() => {
                     resultsDiv.innerHTML = "<div class='list-group-item text-danger'>Erro ao buscar...</div>";
                     resultsDiv.style.display = "block";

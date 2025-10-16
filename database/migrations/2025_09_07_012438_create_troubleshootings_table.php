@@ -18,18 +18,20 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
 
             // Campos principais
-            $table->string('ticket_code')->nullable();       // Código do chamado
-            $table->string('client_name')->nullable();       // Nome do cliente
-            $table->string('troubleshoot_type')->nullable(); // Tipo de troubleshooting
-            $table->string('description')->nullable();       // Breve descrição
-
-            // === Novos campos fixos ===
-            $table->string('endereco')->nullable();
+            $table->string('nome')->nullable();       // SIGLA
+            $table->string('cpe')->nullable();       // cpe
+            $table->string('pe')->nullable(); // Tipo de troubleshooting
+            $table->string('designador')->nullable();       // Breve descrição
+            $table->string('vlans')->nullable();
+            $table->string('publico')->nullable();
+            $table->string('parceiro')->nullable();
+            $table->string('porta')->nullable();   // Governo, Matriz, Corporativo
+            $table->string('prtg')->nullable();
+            $table->string('avenida')->nullable();
             $table->string('bairro')->nullable();
             $table->string('complemento')->nullable();
-            $table->string('cidade')->nullable();
-            $table->string('grupo')->nullable();   // Governo, Matriz, Corporativo
             $table->string('uf', 2)->nullable();   // Ex: CE, SP, RJ
+            $table->string('cidade')->nullable();
 
             // Dinâmicos e passos
             $table->json('details')->nullable();  // JSON dos detalhes adicionais

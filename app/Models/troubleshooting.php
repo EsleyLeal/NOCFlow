@@ -10,17 +10,20 @@ class Troubleshooting extends Model
     use HasFactory;
 
     protected $fillable = [
-        'ticket_code',
-        'client_name',
-        'troubleshoot_type',
-        'description',
-        'endereco',
+        'nome',
+        'cpe',
+        'pe',
+        'designador',
+        'vlans',
+        'publico',
+        'parceiro',
+        'porta',
+        'prtg',
+        'avenida',
         'bairro',
         'complemento',
-        'cidade',
-        'grupo',
         'uf',
-        'details',
+        'cidade',
         'steps',
         'user_id', // adiciona o vínculo com o dono
     ];
