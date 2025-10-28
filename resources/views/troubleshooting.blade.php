@@ -348,40 +348,70 @@
     </div>
   </div>
 
-  <!-- ACORDEÃO (dinâmico) -->
-  <main class="container-xxl pb-5">
+ <!-- ACORDEÃO (dinâmico) -->
+<main class="container-xxl pb-5">
   <div class="row g-4">
     @forelse($items as $ts)
       <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-        <div class="card bg-dark text-light border-secondary shadow-sm h-100"
-             style="border-radius:1rem; min-height:240px; display:flex; flex-direction:column; justify-content:space-between;">
+        <div class="card bg-dark text-light border-secondary shadow-sm h-100 card-ts"
+             style="border-radius:1rem; min-height:240px; display:flex; flex-direction:column; justify-content:space-between; cursor:pointer;"
+             data-nome="{{ strtoupper($ts->nome ?? '-') }}"
+             data-cpe="{{ strtoupper($ts->cpe ?? '-') }}"
+             data-pe="{{ strtoupper($ts->pe ?? '-') }}"
+             data-designador="{{ strtoupper($ts->designador ?? '-') }}"
+             data-vlans="{{ strtoupper($ts->vlans ?? '-') }}"
+             data-ippublico="{{ strtoupper($ts->ippublico ?? '-') }}"
+             data-parceiro="{{ strtoupper($ts->parceiro ?? '-') }}"
+             data-porta="{{ strtoupper($ts->porta ?? '-') }}"
+             data-prtg="{{ strtoupper($ts->prtg ?? '-') }}"
+             data-avenida="{{ strtoupper($ts->avenida ?? '-') }}"
+             data-bairro="{{ strtoupper($ts->bairro ?? '-') }}"
+             data-complemento="{{ strtoupper($ts->complemento ?? '-') }}"
+             data-uf="{{ strtoupper($ts->uf ?? '-') }}"
+             data-cidade="{{ strtoupper($ts->cidade ?? '-') }}"
+             data-steps="{{ $ts->steps ?? '-' }}"
+        >
 
           <!-- Cabeçalho -->
-          <div class="p-3">
+          <div class="p-3 flex-grow-1">
             <div class="fw-bold mb-2" style="line-height:1.2;">
-  <span style="color:#39ff14;">{{ strtoupper($ts->nome ?? '-') }}</span><br>
-  <span style="color:#00bfff;">{{ strtoupper($ts->cidade ?? '-') }}</span>
-  <span style="color:#66c2ff;">- {{ strtoupper($ts->avenida ?? '-') }}</span><br>
-  <span style="color:#facc15;">{{ strtoupper($ts->complemento ?? '-') }}</span>
-</div>
+              <span style="color:#39ff14;">{{ strtoupper($ts->nome ?? '-') }}</span><br>
+              <span style="color:#00bfff;">{{ strtoupper($ts->cidade ?? '-') }}</span>
+              <span style="color:#66c2ff;"> - {{ strtoupper($ts->avenida ?? '-') }}</span><br>
+              <span style="color:#facc15;">{{ strtoupper($ts->complemento ?? '-') }}</span>
+            </div>
 
             <div class="small">
               <strong>CPE:</strong> {{ strtoupper($ts->cpe ?? '-') }}<br>
               <strong>PE:</strong> {{ strtoupper($ts->pe ?? '-') }}<br>
               <strong>PORTA:</strong> {{ strtoupper($ts->porta ?? '-') }}
             </div>
+
             <div class="small mt-2">
               <strong style="color:#ffcc00;">PARCEIRO:</strong> {{ strtoupper($ts->parceiro ?? '-') }}<br>
               <strong style="color:#ffcc00;">VLANS:</strong> {{ strtoupper($ts->vlans ?? '-') }}<br>
-              <strong style="color:#ffcc00;">PÚBLICO:</strong> {{ strtoupper($ts->publico ?? '-') }}
+              <strong style="color:#ffcc00;">IP:</strong> {{ strtoupper($ts->ippublico ?? '-') }}
             </div>
           </div>
 
           <!-- Rodapé -->
-          <div class="p-3 border-top border-secondary d-flex justify-content-end gap-2">
-            <button class="btn btn-sm btn-success btn-copy-circuit" data-id="{{ $ts->id }}">Copiar</button>
-            <button class="btn btn-sm btn-primary btn-edit-ts" data-id="{{ $ts->id }}">Editar</button>
-            <button class="btn btn-sm btn-danger btn-delete-ts" data-id="{{ $ts->id }}">Excluir</button>
+          <div class="p-3 border-top border-secondary d-flex justify-content-end gap-2"
+               style="z-index:10;">
+            <button class="btn btn-sm btn-success"
+                    onclick="event.stopPropagation(); copiarTexto(this);">
+              Copiar
+            </button>
+            <button class="btn btn-sm btn-primary btn-edit-ts"
+        data-id="{{ $ts->id }}"
+        onclick="event.stopPropagation();">
+  Editar
+<button class="btn btn-sm btn-danger btn-delete-ts"
+        data-id="{{ $ts->id }}"
+        onclick="event.stopPropagation();">
+  Excluir
+</button>
+
+
           </div>
         </div>
       </div>
@@ -391,14 +421,122 @@
   </div>
 </main>
 
+<!-- MODAL DETALHES (dark limpo e legível) -->
+<div class="modal fade" id="tsModal" tabindex="-1" aria-labelledby="tsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content bg-dark text-light border border-secondary" style="border-radius:1rem;">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title" id="tsModalLabel" style="color:#00bfff;">Detalhes do Troubleshooting</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+
+      <div class="modal-body" style="font-size:0.95rem;">
+        <div class="row g-3">
+
+          <!-- Cabeçalho -->
+          <div class="col-12">
+            <div class="p-3 border border-secondary rounded" style="background-color:#111;">
+              <div class="fw-bold" style="color:#39ff14;" id="modal-nome"></div>
+              <div>
+                <span style="color:#00bfff;" id="modal-cidade"></span>
+                <span style="color:#66c2ff;"> - <span id="modal-avenida"></span></span>
+              </div>
+              <div style="color:#facc15;" id="modal-complemento"></div>
+            </div>
+          </div>
+
+          <!-- Coluna Esquerda -->
+          <div class="col-md-6">
+            <div class="p-3 border border-secondary rounded" style="background-color:#0d0d0d;">
+              <div><strong style="color:#87cefa;">CPE:</strong> <span id="modal-cpe"></span></div>
+              <div><strong style="color:#87cefa;">PE:</strong> <span id="modal-pe"></span></div>
+              <div><strong style="color:#87cefa;">DESIGNADOR:</strong> <span id="modal-designador"></span></div>
+              <div><strong style="color:#87cefa;">VLANS:</strong> <span id="modal-vlans"></span></div>
+              <div><strong style="color:#87cefa;">IP PÚBLICO:</strong> <span id="modal-ippublico"></span></div>
+            </div>
+          </div>
+
+          <!-- Coluna Direita -->
+          <div class="col-md-6">
+            <div class="p-3 border border-secondary rounded" style="background-color:#0d0d0d;">
+              <div><strong style="color:#87cefa;">PARCEIRO:</strong> <span id="modal-parceiro"></span></div>
+              <div><strong style="color:#87cefa;">PORTA:</strong> <span id="modal-porta"></span></div>
+              <div>
+                <strong style="color:#87cefa;">PRTG:</strong> <a href="#" id="modal-prtg" target="_blank" class="text-decoration-none" style="color:#00e1ff;">Abrir Link</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="p-3 border border-secondary rounded" style="background-color:#0d0d0d;">
+              <div><strong style="color:#87cefa;">BAIRRO:</strong> <span id="modal-bairro"></span></div>
+              <div><strong style="color:#87cefa;">UF:</strong> <span id="modal-uf"></span></div>
+            </div>
+          </div>
+
+          <!-- Steps -->
+          <div class="col-12">
+            <div class="p-3 border border-secondary rounded" style="background-color:#0d0d0d;">
+              <strong style="color:#00bfff;">MAIS INFORMAÇÕES:</strong>
+              <pre id="modal-steps" class="mt-2 text-light" style="background-color:#000; padding:1rem; border-radius:0.5rem; white-space:pre-wrap; font-family:'Consolas', monospace; font-size:0.9rem; line-height:1.4;"></pre>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
  @include('reuse.footer')
 
   <script>
 
+document.addEventListener('DOMContentLoaded', function () {
+  const cards = document.querySelectorAll('.card-ts');
+  const tsModalEl = document.getElementById('tsModal');
+  const tsModal = new bootstrap.Modal(tsModalEl);
 
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      document.getElementById('modal-nome').textContent        = card.dataset.nome;
+      document.getElementById('modal-cpe').textContent         = card.dataset.cpe;
+      document.getElementById('modal-pe').textContent          = card.dataset.pe;
+      document.getElementById('modal-designador').textContent  = card.dataset.designador;
+      document.getElementById('modal-vlans').textContent       = card.dataset.vlans;
+      document.getElementById('modal-ippublico').textContent   = card.dataset.ippublico;
+      document.getElementById('modal-parceiro').textContent    = card.dataset.parceiro;
+      document.getElementById('modal-porta').textContent       = card.dataset.porta;
+      document.getElementById('modal-bairro').textContent      = card.dataset.bairro;
+      document.getElementById('modal-uf').textContent          = card.dataset.uf;
+      document.getElementById('modal-avenida').textContent     = card.dataset.avenida;
+      document.getElementById('modal-complemento').textContent = card.dataset.complemento;
+      document.getElementById('modal-cidade').textContent      = card.dataset.cidade;
 
+      // Mostra os passos com quebras de linha
+      document.getElementById('modal-steps').textContent       = card.dataset.steps;
+
+      // Link PRTG clicável
+      const prtg = card.dataset.prtg;
+      const prtgLink = document.getElementById('modal-prtg');
+      if (prtg && prtg !== '-') {
+        prtgLink.href = prtg;
+        prtgLink.textContent = prtg;
+      } else {
+        prtgLink.href = '#';
+        prtgLink.textContent = '-';
+      }
+
+      tsModal.show();
+    });
+  });
+});
 document.addEventListener("DOMContentLoaded", () => {
     const searchBox = document.getElementById("searchBox");
     const resultsDiv = document.getElementById("searchResults");
@@ -501,47 +639,30 @@ document.addEventListener("DOMContentLoaded", () => {
 // COPIAR CIRCUITO
 
 // Botão Copiar Circuito
-document.querySelectorAll('.btn-copy-circuit').forEach(btn => {
-  btn.addEventListener('click', async () => {
-    const accordionItem = btn.closest('.accordion-item');
+// Função copiar texto (somente campos principais)
+function copiarTexto(botao) {
+  const card = botao.closest('.card');
+  const dados = `
+${card.dataset.nome} - ${card.dataset.cidade}
 
-    // procura o título h6 que contém o texto
-    const h6s = accordionItem.querySelectorAll('h6.neon');
-    let table = null;
+CPE: ${card.dataset.cpe}
+PE: ${card.dataset.pe}
+DESIGNADOR: ${card.dataset.designador}
+VLANS: ${card.dataset.vlans}
+PÚBLICO: ${card.dataset.publico ?? '-'}
+PARCEIRO: ${card.dataset.parceiro}
+PORTA: ${card.dataset.porta}
+PRTG: ${card.dataset.prtg}
+  `.trim();
 
-    h6s.forEach(h6 => {
-      if (h6.textContent.trim() === "Informação de Circuito") {
-        // pega a tabela logo depois do h6
-        table = h6.nextElementSibling?.querySelector("table");
-      }
-    });
-
-    if (!table) {
-      alert("Nenhuma informação de circuito disponível.");
-      return;
-    }
-
-    // monta o texto formatado
-    let texto = "";
-    table.querySelectorAll('tbody tr').forEach(row => {
-      const cols = row.querySelectorAll('td, th');
-let linha = Array.from(cols)
-  .map(col => col.dataset.value ?? col.innerText.trim())
-
-  .filter(txt => txt && txt !== "-")   // remove vazio e "-"
-  .join(" | ");
-      texto += linha + "\n";
-    });
-
-    try {
-      await navigator.clipboard.writeText(texto.trim());
-      btn.innerText = "Copiado!";
-      setTimeout(() => btn.innerText = "Copiar Circuito", 1200);
-    } catch (e) {
-      alert("Não foi possível copiar.");
-    }
+  navigator.clipboard.writeText(dados).then(() => {
+    botao.textContent = 'Copiado!';
+    setTimeout(() => botao.textContent = 'Copiar', 2000);
+  }).catch(() => {
+    alert('Não foi possível copiar o texto.');
   });
-});
+}
+
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -654,31 +775,38 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // --- Botão Excluir
-  document.querySelectorAll('.btn-delete-ts').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.id;
+ // --- Botão Excluir
+document.querySelectorAll('.btn-delete-ts').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.dataset.id;
 
-      if (!confirm("Tem certeza que deseja excluir este troubleshooting?")) {
-        return;
-      }
+    if (!confirm("Tem certeza que deseja excluir este troubleshooting?")) {
+      return;
+    }
 
-      fetch(`/troubleshooting/${id}`, {
-        method: 'DELETE',
-        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
-      })
-      .then(res => {
-        if (!res.ok) throw new Error();
-        const item = btn.closest('.accordion-item');
-        if (item) item.remove();
-      })
-      .catch(() => {
-        alert("Erro ao excluir o troubleshooting.");
-      });
+    fetch(`/troubleshooting/${id}`, {
+      method: 'DELETE',
+      headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error();
+
+      // Remove o item (se quiser manter)
+      const item = btn.closest('.accordion-item');
+      if (item) item.remove();
+
+      // ✅ Atualiza a página após excluir
+      setTimeout(() => location.reload(), 400);
+
+    })
+    .catch(() => {
+      alert("Erro ao excluir o troubleshooting.");
     });
   });
+});
 
 }); // fim do DOMContentLoaded
+
 
 // ==============================
 // FUNÇÕES DE SALVAR
