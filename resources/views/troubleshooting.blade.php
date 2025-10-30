@@ -86,6 +86,14 @@
 .nav-link-muted:hover{ background:#0f172a }
 .divider{ border-top:1px solid #111827 }
 
+main.container-xxl {
+  max-height: 900px; /* altura visível */
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  padding-right: 10px;
+}
+
+
 
   </style>
 </head>
@@ -498,6 +506,41 @@
 
   <script>
 
+    document.addEventListener("DOMContentLoaded", () => {
+  const cards = document.querySelectorAll(".card-ts");
+  const cardsPerRow = 4; // colunas por linha (Bootstrap col-xl-3)
+  const visibleRows = 3; // mostra 3 linhas
+  const totalVisible = cardsPerRow * visibleRows; // total de cards visíveis
+
+  // Oculta os demais cards além do limite
+  cards.forEach((card, index) => {
+    if (index >= totalVisible) {
+      card.style.display = "none";
+    }
+  });
+
+  // Adiciona botão "Mostrar Todos" no final
+  if (cards.length > totalVisible) {
+    const btnShowAll = document.createElement("button");
+    btnShowAll.textContent = "🔽 Mostrar Todos";
+    btnShowAll.className = "btn btn-outline-light w-100 mt-4";
+    btnShowAll.style.maxWidth = "400px";
+    btnShowAll.style.margin = "0 auto";
+    btnShowAll.style.display = "block";
+
+    const mainContainer = document.querySelector("main.container-xxl");
+    mainContainer.appendChild(btnShowAll);
+
+    btnShowAll.addEventListener("click", () => {
+      cards.forEach((card) => (card.style.display = "flex"));
+      btnShowAll.remove();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+});
+
+
+
 document.addEventListener('DOMContentLoaded', function () {
   const cards = document.querySelectorAll('.card-ts');
   const tsModalEl = document.getElementById('tsModal');
@@ -593,26 +636,65 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     el.addEventListener("click", (e) => {
-      e.preventDefault();
+  e.preventDefault();
 
-      resultsDiv.style.display = "none";
-      resultsDiv.innerHTML = "";
-      searchBox.value = "";
+  // não limpa o campo — mantém o texto
+  const query = searchBox.value.trim().toLowerCase();
 
-      document.querySelectorAll('.accordion-collapse.show')
-        .forEach(c => c.classList.remove('show'));
+  resultsDiv.style.display = "none";
+  resultsDiv.innerHTML = "";
 
-      const target = document.querySelector(`#c-ts-${item.id}`);
-      if (target) {
-        target.classList.add('show');
-        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const allCards = document.querySelectorAll(".card-ts");
 
-        const headerBtn = target.closest('.accordion-item').querySelector('.accordion-button');
-        if (headerBtn && headerBtn.classList.contains('collapsed')) {
-          headerBtn.classList.remove('collapsed');
-        }
+  // Esconde todos os cards
+  allCards.forEach((c) => (c.style.display = "none"));
+
+  // Mostra apenas o card correspondente
+  const card =
+    document.querySelector(`.card-ts[data-cpe="${item.cpe}"]`) ||
+    document.querySelector(`.card-ts[data-id="${item.id}"]`);
+
+  if (card) {
+    card.style.display = "flex";
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    // Destaque visual temporário
+    card.classList.add("border-success");
+    setTimeout(() => card.classList.remove("border-success"), 2000);
+
+    // Cria botão "Mostrar Todos" se ainda não existir
+    let btnShowAll = document.getElementById("btnShowAll");
+    if (!btnShowAll) {
+      btnShowAll = document.createElement("button");
+      btnShowAll.id = "btnShowAll";
+      btnShowAll.className = "btn btn-secondary position-fixed";
+      btnShowAll.style.bottom = "230px";
+      btnShowAll.style.right = "20px";
+      btnShowAll.style.zIndex = "2000";
+      btnShowAll.textContent = "🔄 Mostrar Todos";
+      document.body.appendChild(btnShowAll);
+
+      btnShowAll.addEventListener("click", () => {
+        allCards.forEach((c) => (c.style.display = "flex"));
+        btnShowAll.remove();
+        searchBox.value = "";
+      });
+    }
+  }
+
+  // Listener global (não interno) para restaurar cards quando apagar o campo
+  document.addEventListener("input", (ev) => {
+    if (ev.target === searchBox) {
+      const val = searchBox.value.trim();
+      if (val === "") {
+        allCards.forEach((c) => (c.style.display = "flex"));
+        const btnShowAll = document.getElementById("btnShowAll");
+        if (btnShowAll) btnShowAll.remove();
       }
-    });
+    }
+  });
+});
+
 
     resultsDiv.appendChild(el);
   });

@@ -15,6 +15,9 @@ Ainda não temos uma confirmação do estado elétrico do local por parte do cli
 Poderiam verificar se existe algum alarme que indique falta de energia no circuito ou problema físico no lado de vocês , por gentileza?
 
 Ficamos no aguardo de um feedback.
+
+Atenciosamente,
+NOC Tely
   `,
 
   "UPTIME REINICIADO": `
@@ -23,6 +26,9 @@ Prezados,
 O link retornou sem intervenção técnica. Uptime do equipamento foi reiniciado. Possível falha elétrica no local.
 
 Estarei encerrando o chamado aberto.
+
+Atenciosamente,
+NOC Tely
   `,
 
   "ONU DESLIGADA": `
@@ -34,6 +40,7 @@ Identificamos que a ONU se encontra desligada, ou seja, um possível problema el
 Poderiam verificar se os nossos equipamentos estão devidamente energizados no local ?
 
 Atenciosamente,
+NOC Tely
   `,
 
   "EMAIL MASSIVO": `
@@ -80,7 +87,8 @@ Identificamos que a ONU se encontra com alarme de LINK LOSS, ou seja, um possív
 
 Estamos encaminhando para o suporte de manutenção.
 
-Atenciosamente,`,
+Atenciosamente,
+NOC Tely`,
 
 "ABERTURA SZ RBX E EMAIL": `
 ➢ Nome do Solicitante: [NOME]
@@ -106,6 +114,7 @@ Ficamos no aguardo da sua resposta para prosseguirmos com a tratativa.
 
 
 Atenciosamente,
+NOC Tely
 `,
 
 "GOV INDISPONIBILIDADE (QUANDO NÃO RESPONDEM)": `
@@ -117,6 +126,7 @@ Seguimos no aguardo de um retorno referente ao estado dos equipamentos no local.
 Ficamos no aguardo da sua resposta para prosseguirmos com a tratativa.
 
 Atenciosamente,
+NOC Tely
 `,
 
 "CNPJ TELY": `
@@ -135,7 +145,6 @@ VLANS : [VLAN]
 
 
 CNPJ TELY: 06.346.446.0001-59
-
 
 
 Atenciosamente,

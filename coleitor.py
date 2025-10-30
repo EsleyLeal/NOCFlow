@@ -119,10 +119,19 @@ canvas.bind("<Leave>", _unbind_wheel)
 g = saudacao_automatica()  # calcula uma vez
 
 frases = [
-    g,                          # "Olá, bom dia!" | "Boa tarde!" | "Boa noite!"
+    g,  # "Olá, bom dia!" | "Boa tarde!" | "Boa noite!"
+    """telysupport
+ep2@YPl429PSy#
+enable
+62aDqGkOrIB3%M
+show run""",
+    "CNPJ Tely : 06.346.446.0001-59",
+    "HORARIO DE QUEDA - ",
+    "HORARIO DE VOLTA - ",
+    "Contato N3 - 0800 731 1400 ",
+    "Call Center - 0800 731 2020",
     f"Prezados, {g}",
     "Verificando, só um momento...",
-    "CNPJ Tely : 06.346.446.0001-59",
     "Joia!",
     "Obrigado!",
     "Perfeito!",
@@ -138,8 +147,9 @@ frases = [
     "Agradeço desde já o retorno.",
     "Excelente dia a todos!",
     "Bom trabalho!",
-    "Cordialmente,",
+    "Cordialmente,"
 ]
+
 
 # Botões
 for frase in frases:

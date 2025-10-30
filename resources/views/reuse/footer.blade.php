@@ -1,7 +1,6 @@
 <footer class="site-footer mt-auto">
   <div class="container-xxl py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
     <div class="d-flex flex-wrap align-items-center gap-2">
-      <span class="mono muted">Criado por</span>
       <a
         class="link-neon neon-soft fw-bold"
         href="https://esleylealportfolio.vercel.app/"
@@ -9,10 +8,9 @@
         rel="noopener noreferrer"
         aria-label="Abrir portfólio de Esley Leal"
       >
-        Esley Leal
+        NOC
       </a>
-      <span class="muted">e</span>
-      <strong class="neon-soft">Anderson</strong>
+
     </div>
 
     <small class="mono">
