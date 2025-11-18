@@ -368,7 +368,7 @@ main.container-xxl {
              data-pe="{{ strtoupper($ts->pe ?? '-') }}"
              data-designador="{{ strtoupper($ts->designador ?? '-') }}"
              data-vlans="{{ strtoupper($ts->vlans ?? '-') }}"
-             data-ippublico="{{ strtoupper($ts->ippublico ?? '-') }}"
+             data-publico="{{ strtoupper($ts->publico ?? '-') }}"
              data-parceiro="{{ strtoupper($ts->parceiro ?? '-') }}"
              data-porta="{{ strtoupper($ts->porta ?? '-') }}"
              data-prtg="{{ strtoupper($ts->prtg ?? '-') }}"
@@ -378,6 +378,11 @@ main.container-xxl {
              data-uf="{{ strtoupper($ts->uf ?? '-') }}"
              data-cidade="{{ strtoupper($ts->cidade ?? '-') }}"
              data-steps="{{ $ts->steps ?? '-' }}"
+             data-contrato="{{ strtoupper($ts->contrato ?? '-') }}"
+             data-sw_acesso="{{ strtoupper($ts->sw_acesso ?? '-') }}"
+             data-contato_parceiro="{{ strtoupper($ts->contato_parceiro ?? '-') }}"
+             data-onu="{{ strtoupper($ts->onu ?? '-') }}"
+
         >
 
           <!-- Cabeçalho -->
@@ -398,7 +403,7 @@ main.container-xxl {
             <div class="small mt-2">
               <strong style="color:#ffcc00;">PARCEIRO:</strong> {{ strtoupper($ts->parceiro ?? '-') }}<br>
               <strong style="color:#ffcc00;">VLANS:</strong> {{ strtoupper($ts->vlans ?? '-') }}<br>
-              <strong style="color:#ffcc00;">IP:</strong> {{ strtoupper($ts->ippublico ?? '-') }}
+              <strong style="color:#ffcc00;">IP:</strong> {{ strtoupper($ts->publico ?? '-') }}
             </div>
           </div>
 
@@ -456,24 +461,31 @@ main.container-xxl {
           <!-- Coluna Esquerda -->
           <div class="col-md-6">
             <div class="p-3 border border-secondary rounded" style="background-color:#0d0d0d;">
-              <div><strong style="color:#87cefa;">CPE:</strong> <span id="modal-cpe"></span></div>
-              <div><strong style="color:#87cefa;">PE:</strong> <span id="modal-pe"></span></div>
-              <div><strong style="color:#87cefa;">DESIGNADOR:</strong> <span id="modal-designador"></span></div>
-              <div><strong style="color:#87cefa;">VLANS:</strong> <span id="modal-vlans"></span></div>
-              <div><strong style="color:#87cefa;">IP PÚBLICO:</strong> <span id="modal-ippublico"></span></div>
+                <div><strong style="color:#87cefa;">CONTRATO:</strong> <span id="modal-contrato"></span></div>
+                <div><strong style="color:#87cefa;">CPE:</strong> <span id="modal-cpe"></span></div>
+                <div><strong style="color:#87cefa;">PE:</strong> <span id="modal-pe"></span></div>
+                <div><strong style="color:#87cefa;">ONU:</strong> <span id="modal-onu"></span></div>
+                <div><strong style="color:#87cefa;">DESIGNADOR:</strong> <span id="modal-designador"></span></div>
+                <div><strong style="color:#87cefa;">VLANS:</strong> <span id="modal-vlans"></span></div>
+                <div><strong style="color:#87cefa;">IP PÚBLICO:</strong> <span id="modal-publico"></span></div>
             </div>
-          </div>
+            </div>
+
 
           <!-- Coluna Direita -->
           <div class="col-md-6">
-            <div class="p-3 border border-secondary rounded" style="background-color:#0d0d0d;">
-              <div><strong style="color:#87cefa;">PARCEIRO:</strong> <span id="modal-parceiro"></span></div>
-              <div><strong style="color:#87cefa;">PORTA:</strong> <span id="modal-porta"></span></div>
-              <div>
-                <strong style="color:#87cefa;">PRTG:</strong> <a href="#" id="modal-prtg" target="_blank" class="text-decoration-none" style="color:#00e1ff;">Abrir Link</a>
-              </div>
-            </div>
-          </div>
+  <div class="p-3 border border-secondary rounded" style="background-color:#0d0d0d;">
+    <div><strong style="color:#87cefa;">PARCEIRO:</strong> <span id="modal-parceiro"></span></div>
+    <div><strong style="color:#87cefa;">CONTATO PARCEIRO:</strong> <span id="modal-contato-parceiro"></span></div>
+    <div><strong style="color:#87cefa;">PORTA:</strong> <span id="modal-porta"></span></div>
+    <div><strong style="color:#87cefa;">SW ACESSO:</strong> <span id="modal-sw-acesso"></span></div>
+    <div>
+      <strong style="color:#87cefa;">PRTG:</strong>
+      <a href="#" id="modal-prtg" target="_blank" class="text-decoration-none" style="color:#00e1ff;">Abrir Link</a>
+    </div>
+  </div>
+</div>
+
 
           <div class="col-md-6">
             <div class="p-3 border border-secondary rounded" style="background-color:#0d0d0d;">
@@ -548,14 +560,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
   cards.forEach(card => {
     card.addEventListener('click', () => {
+      document.getElementById('modal-contrato').textContent        = card.dataset.nome;
       document.getElementById('modal-nome').textContent        = card.dataset.nome;
       document.getElementById('modal-cpe').textContent         = card.dataset.cpe;
       document.getElementById('modal-pe').textContent          = card.dataset.pe;
+      document.getElementById('modal-onu').textContent          = card.dataset.onu;
       document.getElementById('modal-designador').textContent  = card.dataset.designador;
       document.getElementById('modal-vlans').textContent       = card.dataset.vlans;
-      document.getElementById('modal-ippublico').textContent   = card.dataset.ippublico;
+      document.getElementById('modal-publico').textContent   = card.dataset.publico;
       document.getElementById('modal-parceiro').textContent    = card.dataset.parceiro;
+      document.getElementById('modal-contato-parceiro').textContent = card.dataset.contato_parceiro ?? "-";
       document.getElementById('modal-porta').textContent       = card.dataset.porta;
+      document.getElementById('modal-sw-acesso').textContent       = card.dataset.sw_acesso;
       document.getElementById('modal-bairro').textContent      = card.dataset.bairro;
       document.getElementById('modal-uf').textContent          = card.dataset.uf;
       document.getElementById('modal-avenida').textContent     = card.dataset.avenida;
@@ -1026,9 +1042,70 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// teste
 
 
+
+/* ==========================================================
+   FUNÇÃO GLOBAL — ativa switches, tabs e sortable
+   ========================================================== */
+function initTroubleshootingForm(scope = document) {
+
+    // Switches com data-toggle-field
+    scope.querySelectorAll("[data-toggle-field]").forEach(sw => {
+        sw.addEventListener("change", () => {
+            const target = scope.querySelector("#" + sw.dataset.toggleField);
+            if (target) target.classList.toggle("d-none", !sw.checked);
+        });
+    });
+
+    // Switches simples
+    scope.querySelectorAll(".form-check-input").forEach(sw => {
+        const match = sw.getAttribute("onclick")?.match(/'([^']+)'/);
+        if (!match) return;
+
+        const targetId = match[1];
+        sw.addEventListener("change", () => {
+            const target = scope.querySelector("#" + targetId);
+            if (target) target.classList.toggle("d-none", !sw.checked);
+        });
+    });
+
+    // Tabs
+    scope.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+        new bootstrap.Tab(tab);
+    });
+
+    // SortableJS
+    if (typeof Sortable !== "undefined") {
+        scope.querySelectorAll(".sortable-list").forEach(list => {
+            new Sortable(list, {
+                animation: 150,
+                handle: ".drag-handle",
+                ghostClass: "sortable-ghost"
+            });
+        });
+    }
+}
+
+/* ==========================================================
+   INICIALIZAÇÃO AO CARREGAR A PÁGINA
+   (Novo Troubleshooting)
+   ========================================================== */
+document.addEventListener("DOMContentLoaded", () => {
+    initTroubleshootingForm();
+});
+
+
+/* ==========================================================
+   SEU SCRIPT EXISTENTE (SEM ALTERAÇÕES)
+   ========================================================== */
+
+/* ..... TODO O SEU CÓDIGO ATUAL AQUI,
+   NADA É REMOVIDO ATÉ A PARTE DO BOTÃO DE EDITAR ..... */
+
+/* ==========================================================
+   CORREÇÃO — BOTÃO EDITAR
+   ========================================================== */
 document.querySelectorAll('.btn-edit-ts').forEach(btn => {
   btn.addEventListener('click', () => {
     const id = btn.dataset.id;
@@ -1036,9 +1113,11 @@ document.querySelectorAll('.btn-edit-ts').forEach(btn => {
     fetch(`/troubleshooting/${id}/edit`)
       .then(res => res.text())
       .then(html => {
+
         document.getElementById("editFormContainer").innerHTML = html;
 
-        // abre o modal
+        document.dispatchEvent(new Event("ts:modalLoaded"));
+
         const modal = new bootstrap.Modal(document.getElementById("editModal"));
         modal.show();
       })
@@ -1047,6 +1126,14 @@ document.querySelectorAll('.btn-edit-ts').forEach(btn => {
 });
 
 
+
+/* ==========================================================
+   OUVE O EVENTO DO MODAL (edição)
+   ========================================================== */
+
+document.addEventListener("ts:modalLoaded", () => {
+    initTroubleshootingForm(document.getElementById("editFormContainer"));
+});
 
 </script>
 

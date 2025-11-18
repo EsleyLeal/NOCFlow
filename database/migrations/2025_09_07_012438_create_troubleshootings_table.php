@@ -18,26 +18,34 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
 
             // Campos principais
+
+            $table->string('contrato')->nullable();
             $table->string('nome')->nullable();       // SIGLA
             $table->string('cpe')->nullable();       // cpe
             $table->string('pe')->nullable(); // Tipo de troubleshooting
-            $table->string('designador')->nullable();       // Breve descrição
             $table->string('vlans')->nullable();
-            $table->string('publico')->nullable();
-            $table->string('parceiro')->nullable();
-            $table->string('porta')->nullable();   // Governo, Matriz, Corporativo
+            $table->string('designador')->nullable();       // Breve descrição
+            $table->string('onu')->nullable();
             $table->string('prtg')->nullable();
+            $table->string('parceiro')->nullable();
+            $table->string('contato_parceiro')->nullable();
+            $table->string('porta')->nullable();   // Governo, Matriz, Corporativo
+            $table->string('sw_acesso')->nullable();
+            $table->string('publico')->nullable();
             $table->string('avenida')->nullable();
             $table->string('bairro')->nullable();
             $table->string('complemento')->nullable();
             $table->string('uf', 2)->nullable();   // Ex: CE, SP, RJ
             $table->string('cidade')->nullable();
 
+
+
             // Dinâmicos e passos
             $table->json('details')->nullable();  // JSON dos detalhes adicionais
             $table->text('steps')->nullable();    // Passos
 
             $table->timestamps();
+
         });
     }
 

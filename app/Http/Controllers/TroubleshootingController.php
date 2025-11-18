@@ -48,65 +48,72 @@ class TroubleshootingController extends Controller
     // STORE
     // ===============================================
     public function store(Request $request)
-    {
-        $data = $request->validate([
-            'nome'        => 'nullable|string|max:255',
-            'cpe'         => 'nullable|string|max:255',
-            'pe'          => 'nullable|string|max:255',
-            'designador'  => 'nullable|string|max:255',
-            'vlans'       => 'nullable|string|max:255',
-            'publico'     => 'nullable|string|max:255',
-            'parceiro'    => 'nullable|string|max:255',
-            'porta'       => 'nullable|string|max:255',
-            'prtg'        => 'nullable|string|max:1000',
-            'avenida'     => 'nullable|string|max:255',
-            'bairro'      => 'nullable|string|max:255',
-            'complemento' => 'nullable|string|max:255',
-            'uf'          => 'nullable|string|max:2',
-            'cidade'      => 'nullable|string|max:255',
-            'steps'       => 'nullable|string',
-            'details'     => 'nullable|array',
-        ]);
+{
+    $data = $request->validate([
+        'contrato'        => 'nullable|string|max:255',
+        'nome'            => 'nullable|string|max:255',
+        'cpe'             => 'nullable|string|max:255',
+        'pe'              => 'nullable|string|max:255',
+        'vlans'           => 'nullable|string|max:255',
+        'designador'      => 'nullable|string|max:255',
+        'onu'             => 'nullable|string|max:255',
+        'prtg'            => 'nullable|string|max:1000',
+        'parceiro'        => 'nullable|string|max:255',
+        'contato_parceiro'=> 'nullable|string|max:255',
+        'porta'           => 'nullable|string|max:255',
+        'sw_acesso'       => 'nullable|string|max:255',
+        'publico'         => 'nullable|string|max:255',
+        'avenida'         => 'nullable|string|max:255',
+        'bairro'          => 'nullable|string|max:255',
+        'complemento'     => 'nullable|string|max:255',
+        'uf'              => 'nullable|string|max:2',
+        'cidade'          => 'nullable|string|max:255',
+        'steps'           => 'nullable|string',
+        'details'         => 'nullable|array',
+    ]);
 
-        // Monta os detalhes adicionais (caso venham arrays)
-        $details = [];
-        foreach ($request->all() as $key => $value) {
-            if (in_array($key, array_keys($data))) continue;
-            if (is_array($value)) {
-                $details[$key] = $value;
-            }
-        }
+    // Se details vier vazio, salva null
+    $data['details'] = !empty($data['details'])
+        ? json_encode($data['details'], JSON_UNESCAPED_UNICODE)
+        : null;
 
-        $data['details'] = json_encode($details, JSON_UNESCAPED_UNICODE);
-        $data['user_id'] = auth()->id();
+    $data['user_id'] = auth()->id();
 
-        Troubleshooting::create($data);
+    Troubleshooting::create($data);
 
-        return back()->with('success', 'Troubleshooting adicionado com sucesso!');
-    }
+    return back()->with('success', 'Troubleshooting adicionado com sucesso!');
+}
+
 
     // ===============================================
     // UPDATE
     // ===============================================
     public function update(Request $request, Troubleshooting $troubleshooting)
-    {
-        $user = auth()->user();
+{
+    $user = auth()->user();
 
-        if (!($user->isAdmin() || $user->id === $troubleshooting->user_id)) {
-            return response()->json(['error' => 'Não autorizado'], 403);
-        }
-
-        $fields = [
-            'nome','cpe','pe','designador','vlans','publico',
-            'parceiro','porta','prtg','avenida','bairro',
-            'complemento','uf','cidade','steps','details'
-        ];
-
-        $troubleshooting->update($request->only($fields));
-
-        return redirect()->route('troubleshooting')
-                         ->with('success', 'Troubleshooting atualizado com sucesso!');
+    if (!($user->isAdmin() || $user->id === $troubleshooting->user_id)) {
+        return response()->json(['error' => 'Não autorizado'], 403);
     }
+
+    $fields = [
+        'contrato','nome','cpe','pe','vlans','designador','onu','prtg',
+        'parceiro','contato_parceiro','porta','sw_acesso','publico',
+        'avenida','bairro','complemento','uf','cidade','steps','details'
+    ];
+
+    $data = $request->only($fields);
+
+    if (isset($data['details']) && is_array($data['details'])) {
+        $data['details'] = json_encode($data['details'], JSON_UNESCAPED_UNICODE);
+    }
+
+    $troubleshooting->update($data);
+
+    return redirect()->route('troubleshooting')
+                     ->with('success', 'Troubleshooting atualizado com sucesso!');
+}
+
 
     // ===============================================
     // DESTROY
@@ -187,6 +194,7 @@ class TroubleshootingController extends Controller
     public function edit($id)
     {
         $ts = Troubleshooting::findOrFail($id);
-        return view('reuse.viewNovoTroubleshooting', compact('ts'));
+        return view('reuse.viewEditTroubleshooting', compact('ts'));
+
     }
 }

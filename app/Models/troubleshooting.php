@@ -9,24 +9,29 @@ class Troubleshooting extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'nome',
-        'cpe',
-        'pe',
-        'designador',
-        'vlans',
-        'publico',
-        'parceiro',
-        'porta',
-        'prtg',
-        'avenida',
-        'bairro',
-        'complemento',
-        'uf',
-        'cidade',
-        'steps',
-        'user_id', // adiciona o vínculo com o dono
-    ];
+   protected $fillable = [
+    'contrato',
+    'nome',
+    'cpe',
+    'pe',
+    'vlans',
+    'designador',
+    'onu',
+    'prtg',
+    'parceiro',
+    'contato_parceiro',
+    'porta',
+    'sw_acesso',
+    'publico',
+    'avenida',
+    'bairro',
+    'complemento',
+    'uf',
+    'cidade',
+    'steps',
+    'user_id',
+];
+
 
     protected $casts = [
         'details' => 'array', // 👈 transforma JSON em array automaticamente
