@@ -46,7 +46,7 @@ Você pode contribuir com qualquer valor. Sua ajuda apoia o desenvolvimento cont
 <p align="center">
   <img src="https://github.com/user-attachments/assets/5cf5c9c4-4921-4acd-9bf2-1e947d83983b"
        alt="QR Code PIX"
-       width="180">
+       width="350">
 </p>
 
 Contribuições são bem-vindas.  
