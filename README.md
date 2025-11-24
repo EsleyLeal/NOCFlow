@@ -2,7 +2,7 @@
 
 
 <p align="center">
-      <img width="1180" height="692" alt="NOCn2" src="https://github.com/user-attachments/assets/5c21efad-dc6f-424f-b87b-f3c9d5aef97e" />
+      <img width="1300" height="619" alt="Captura de tela 2025-11-24 150250" src="https://github.com/user-attachments/assets/d68e40e5-ce13-4bf5-8f94-4387c19fbd2d" />
 </p>
 
 <p align="center">
