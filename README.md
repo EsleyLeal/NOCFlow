@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # README.md
 
 <p align="center">
@@ -5,6 +6,8 @@
        width="420" alt="NOCFlow Logo">
 </p>
 
+=======
+>>>>>>> 320bf5e618383ff255bfbd8d1f1d08e3e70b61e0
 <p align="center">
 <a href="https://github.com/laravel/framework/actions">
   <img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status">
@@ -116,6 +119,7 @@ public/
 
 <p align="center"><strong>Chave PIX:</strong> lealsantanati@gmail.com</p>
 
+<<<<<<< HEAD
 Contribuições são bem-vindas!
 
 Abra uma issue antes de enviar grandes alterações para alinharmos ideias.
@@ -123,3 +127,10 @@ Abra uma issue antes de enviar grandes alterações para alinharmos ideias.
 Se encontrar vulnerabilidades, envie uma mensagem privada ao mantenedor.
 
 Este projeto é distribuído sob a licença MIT.
+=======
+---
+=======
+# NOCFlow
+Sistema avançado de troubleshooting e gestão de incidentes em redes, projetado para equipes NOC que precisam de agilidade, organização e precisão no diagnóstico.
+
+>>>>>>> 320bf5e618383ff255bfbd8d1f1d08e3e70b61e0
