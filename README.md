@@ -40,9 +40,11 @@ Laravel 11 · PHP 8+ · MySQL · Bootstrap 5 · SortableJS
 Você pode contribuir com qualquer valor. Sua ajuda apoia o desenvolvimento contínuo do projeto e me incentiva a seguir evoluindo e criando novas funcionalidades.
 
 <p align="center"><strong>Chave PIX:</strong> lealsantanati@gmail.com</p>
-![qrcode](https://github.com/user-attachments/assets/b91a73d2-7136-4651-be47-f98f46f3fdbd)
 
----
+--
+![qrcode](https://github.com/user-attachments/assets/5cf5c9c4-4921-4acd-9bf2-1e947d83983b)
+
+
 
 Contribuições são bem-vindas.  
 Licença MIT.
