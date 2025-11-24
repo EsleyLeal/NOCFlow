@@ -37,15 +37,9 @@ Painel profissional para equipes NOC, focado em rapidez, organização e central
 
 Laravel 11 · PHP 8+ · MySQL · Bootstrap 5 · SortableJS
 
----
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/EsleyLeal/NOCFlow/main/public/pix/qrcode.jpeg"
-       width="260" alt="QR Code PIX">
-</p>
+Você pode contribuir com qualquer valor. Sua ajuda apoia o desenvolvimento contínuo do projeto e me incentiva a seguir evoluindo e criando novas funcionalidades.
 
 <p align="center"><strong>Chave PIX:</strong> lealsantanati@gmail.com</p>
-
 ---
 
 Contribuições são bem-vindas.  
