@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # README.md
 
 <p align="center">
@@ -122,3 +123,7 @@ Se este sistema te ajudou, considere apoiar com um PIX 💚
 <p align="center"><strong>Chave PIX:</strong> lealsantanati@gmail.com</p>
 
 ---
+=======
+# NOCFlow
+Sistema avançado de troubleshooting e gestão de incidentes em redes, projetado para equipes NOC que precisam de agilidade, organização e precisão no diagnóstico.
+>>>>>>> 7deb44e4e2dde6b13876dd01cea82b043572c20f
