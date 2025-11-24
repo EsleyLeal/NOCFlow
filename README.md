@@ -1,8 +1,9 @@
 # NOCFlow
 
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/EsleyLeal/NOCFlow/main/public/NOCn2.png"
-       width="420" alt="NOCFlow Logo">
+      <img width="1180" height="692" alt="NOCn2" src="https://github.com/user-attachments/assets/5c21efad-dc6f-424f-b87b-f3c9d5aef97e" />
 </p>
 
 <p align="center">
