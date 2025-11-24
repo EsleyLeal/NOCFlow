@@ -1,43 +1,51 @@
-<<<<<<< HEAD
 # README.md
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg"
-         width="400" alt="Laravel Logo">
+  <img src="https://raw.githubusercontent.com/EsleyLeal/NOCFlow/main/public/NOCn2.png"
+       width="420" alt="NOCFlow Logo">
 </p>
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+<a href="https://github.com/laravel/framework/actions">
+  <img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status">
+</a>
+<a href="https://packagist.org/packages/laravel/framework">
+  <img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads">
+</a>
+<a href="https://packagist.org/packages/laravel/framework">
+  <img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version">
+</a>
+<a href="https://packagist.org/packages/laravel/framework">
+  <img src="https://img.shields.io/packagist/l/laravel/framework" alt="License">
+</a>
 </p>
 
-# 📡 Network Operations Manager
+# 📡 NOCFlow — Network Operations Manager
 
-Um painel completo desenvolvido para otimizar operações de rede, gerenciar clientes, registrar troubleshootings e centralizar informações técnicas essenciais.  
-Criado com **Laravel**, focado em produtividade, organização e velocidade para equipes NOC e operações.
+Painel profissional para equipes NOC, criado para otimizar operações de rede, agilizar diagnóstico técnico e centralizar informações em um único ambiente moderno e eficiente.
+
+Construído com **Laravel 11**, focado em **velocidade, organização e produtividade**.
 
 ---
 
 ## 🚀 Funcionalidades
 
 - Registro completo de Troubleshooting  
-- Edição avançada com abas organizadas  
-- Pesquisa inteligente com múltiplos filtros  
+- Edição avançada em abas organizadas  
+- Pesquisa inteligente com múltiplos critérios  
 - Controle de edição por usuário  
-- Interface otimizada para ambiente profissional  
-- Campos técnicos como:
-  - IP (CPE)
-  - PE Relacionado
-  - Designador
+- Interface otimizada para operação em tempo real  
+- Campos técnicos essenciais:
+  - CPE (IP)
   - VLANs
+  - PE Relacionado
+  - Porta / Circuito
   - ONU
-  - PRTG Link
-  - Porta e Circuito
+  - Designador
+  - PRTG (Link)
   - Endereço completo
-- Histórico de alteração automática (`LAST_EDIT_USER` e `LAST_EDIT_TIME`)
-- Suporte a detalhes extras via campo JSON
+- Histórico de alterações automáticas  
+- Suporte a JSON via campo `DETAILS`
 
 ---
 
@@ -46,7 +54,7 @@ Criado com **Laravel**, focado em produtividade, organização e velocidade para
 - PHP 8+
 - Laravel 11
 - Blade Templates
-- MySQL / MariaDB
+- MySQL/MariaDB
 - Bootstrap 5
 - SortableJS
 - FontAwesome Icons
@@ -57,29 +65,33 @@ Criado com **Laravel**, focado em produtividade, organização e velocidade para
 
 Clone o repositório:
 
-git clone https://github.com/seu-usuario/seu-projeto.git
+git clone https://github.com/EsleyLeal/NOCFlow.git
+cd NOCFlow
 
-Instale as dependências:
+Instale as dependências do backend:
 
 composer install
-npm install && npm run build
 
-Configure o `.env`:
+Instale dependências do frontend:
+
+npm install
+npm run build
+
+Copie o arquivo de configuração:
 
 cp .env.example .env
+
+Gere a chave da aplicação:
+
 php artisan key:generate
 
-Configure o banco de dados e rode as migrations:
+Configure o banco de dados no arquivo .env e rode as migrations:
 
 php artisan migrate
 
-Inicie o servidor:
+Inicie o servidor local:
 
 php artisan serve
-
----
-
-## 🎯 Estrutura do Projeto
 
 app/
  └── Http/
@@ -91,39 +103,23 @@ resources/
        └── reuse/
              └── viewEditTroubleshooting.blade.php
 
----
-
-## 🤝 Contribuição
-
-Pull requests são bem-vindos!  
-Para grandes mudanças, abra uma issue primeiro para discutirmos o que deseja alterar.
-
----
-
-## 🔒 Segurança
-
-Se encontrar alguma falha de segurança, envie uma mensagem privada diretamente ao mantenedor do repositório.
-
----
-
-## 📄 Licença
-
-Este projeto é distribuído sob a licença MIT, permitindo uso comercial, modificação e redistribuição.
-
----
-
-## 💚 Apoie este Projeto
-
-Se este sistema te ajudou, considere apoiar com um PIX 💚
+public/
+ ├── pix/
+ │    └── qrcode.jpeg
+ ├── NOCn2.png
+ └── index.php
 
 <p align="center">
-  <img src="public/pix/qrcode.jpeg" width="260" alt="QR Code PIX">
+  <img src="https://raw.githubusercontent.com/EsleyLeal/NOCFlow/main/public/pix/qrcode.jpeg"
+       width="260" alt="QR Code PIX">
 </p>
 
 <p align="center"><strong>Chave PIX:</strong> lealsantanati@gmail.com</p>
 
----
-=======
-# NOCFlow
-Sistema avançado de troubleshooting e gestão de incidentes em redes, projetado para equipes NOC que precisam de agilidade, organização e precisão no diagnóstico.
->>>>>>> 7deb44e4e2dde6b13876dd01cea82b043572c20f
+Contribuições são bem-vindas!
+
+Abra uma issue antes de enviar grandes alterações para alinharmos ideias.
+
+Se encontrar vulnerabilidades, envie uma mensagem privada ao mantenedor.
+
+Este projeto é distribuído sob a licença MIT.
