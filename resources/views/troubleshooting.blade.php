@@ -363,49 +363,48 @@ main.container-xxl {
       <div class="col-12 col-md-6 col-lg-4 col-xl-3">
         <div class="card bg-dark text-light border-secondary shadow-sm h-100 card-ts"
              style="border-radius:1rem; min-height:240px; display:flex; flex-direction:column; justify-content:space-between; cursor:pointer;"
-             data-nome="{{ strtoupper($ts->nome ?? '-') }}"
-             data-cpe="{{ strtoupper($ts->cpe ?? '-') }}"
-             data-pe="{{ strtoupper($ts->pe ?? '-') }}"
-             data-designador="{{ strtoupper($ts->designador ?? '-') }}"
-             data-vlans="{{ strtoupper($ts->vlans ?? '-') }}"
-             data-publico="{{ strtoupper($ts->publico ?? '-') }}"
-             data-parceiro="{{ strtoupper($ts->parceiro ?? '-') }}"
-             data-porta="{{ strtoupper($ts->porta ?? '-') }}"
-             data-prtg="{{ strtoupper($ts->prtg ?? '-') }}"
-             data-avenida="{{ strtoupper($ts->avenida ?? '-') }}"
-             data-bairro="{{ strtoupper($ts->bairro ?? '-') }}"
-             data-complemento="{{ strtoupper($ts->complemento ?? '-') }}"
-             data-uf="{{ strtoupper($ts->uf ?? '-') }}"
-             data-cidade="{{ strtoupper($ts->cidade ?? '-') }}"
-             data-steps="{{ $ts->steps ?? '-' }}"
-             data-contrato="{{ strtoupper($ts->contrato ?? '-') }}"
-             data-sw_acesso="{{ strtoupper($ts->sw_acesso ?? '-') }}"
-             data-contato_parceiro="{{ strtoupper($ts->contato_parceiro ?? '-') }}"
-             data-onu="{{ strtoupper($ts->onu ?? '-') }}"
+             data-contrato="{{ strtoupper($ts->CONTRATO_NOVO ?? '-') }}"
+data-nome="{{ strtoupper($ts->NOME ?? '-') }}"
+data-cpe="{{ strtoupper($ts->IP ?? '-') }}"
+data-pe="{{ strtoupper($ts->PE_RELACIONADO ?? '-') }}"
+data-vlans="{{ strtoupper($ts->VLAN_GER ?? '-') }}"
+data-designador="{{ strtoupper($ts->DESIGNADOR ?? '-') }}"
+data-onu="{{ strtoupper($ts->ONU ?? '-') }}"
+data-prtg="{{ strtoupper($ts->LINK_PRTG ?? '-') }}"
+data-parceiro="{{ strtoupper($ts->PARCEIRO ?? '-') }}"
+data-contato_parceiro="{{ strtoupper($ts->CONTATO_PARCEIRO ?? '-') }}"
+data-porta="{{ strtoupper($ts->PORTA ?? '-') }}"
+data-sw_acesso="{{ strtoupper($ts->SW_RELACIONADO ?? '-') }}"
+data-avenida="{{ strtoupper($ts->ENDERECO_NOVO ?? '-') }}"
+data-bairro="{{ strtoupper($ts->ENDERECO_BAIRRO ?? '-') }}"
+data-complemento="{{ strtoupper($ts->ENDERECO_COMPLEMENTO ?? '-') }}"
+data-uf="{{ strtoupper($ts->ENDERECO_UF ?? '-') }}"
+data-cidade="{{ strtoupper($ts->ENDERECO_CIDADE ?? '-') }}"
+data-steps="{{ $ts->STEPS ?? '-' }}"
+
 
         >
 
           <!-- Cabeçalho -->
           <div class="p-3 flex-grow-1">
-            <div class="fw-bold mb-2" style="line-height:1.2;">
-              <span style="color:#39ff14;">{{ strtoupper($ts->nome ?? '-') }}</span><br>
-              <span style="color:#00bfff;">{{ strtoupper($ts->cidade ?? '-') }}</span>
-              <span style="color:#66c2ff;"> - {{ strtoupper($ts->avenida ?? '-') }}</span><br>
-              <span style="color:#facc15;">{{ strtoupper($ts->complemento ?? '-') }}</span>
-            </div>
+  <div class="fw-bold mb-2" style="line-height:1.2;">
+    <span style="color:#39ff14;">{{ strtoupper($ts->NOME ?? '-') }}</span><br>
+    <span style="color:#00bfff;">{{ strtoupper($ts->ENDERECO_CIDADE ?? '-') }}</span>
+    <span style="color:#66c2ff;"> - {{ strtoupper($ts->ENDERECO_NOVO ?? '-') }}</span><br>
+    <span style="color:#facc15;">{{ strtoupper($ts->ENDERECO_COMPLEMENTO ?? '-') }}</span>
+  </div>
 
-            <div class="small">
-              <strong>CPE:</strong> {{ strtoupper($ts->cpe ?? '-') }}<br>
-              <strong>PE:</strong> {{ strtoupper($ts->pe ?? '-') }}<br>
-              <strong>PORTA:</strong> {{ strtoupper($ts->porta ?? '-') }}
-            </div>
+  <div class="small">
+    <strong>CPE:</strong> {{ strtoupper($ts->IP ?? '-') }}<br>
+    <strong>PE:</strong> {{ strtoupper($ts->PE_RELACIONADO ?? '-') }}<br>
+    <strong>PORTA:</strong> {{ strtoupper($ts->PORTA ?? '-') }}
+  </div>
 
-            <div class="small mt-2">
-              <strong style="color:#ffcc00;">PARCEIRO:</strong> {{ strtoupper($ts->parceiro ?? '-') }}<br>
-              <strong style="color:#ffcc00;">VLANS:</strong> {{ strtoupper($ts->vlans ?? '-') }}<br>
-              <strong style="color:#ffcc00;">IP:</strong> {{ strtoupper($ts->publico ?? '-') }}
-            </div>
-          </div>
+  <div class="small mt-2">
+    <strong style="color:#ffcc00;">PARCEIRO:</strong> {{ strtoupper($ts->PARCEIRO ?? '-') }}<br>
+    <strong style="color:#ffcc00;">VLANS:</strong> {{ strtoupper($ts->VLAN_GER ?? '-') }}<br>
+  </div>
+</div>
 
           <!-- Rodapé -->
           <div class="p-3 border-top border-secondary d-flex justify-content-end gap-2"
@@ -560,26 +559,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
   cards.forEach(card => {
     card.addEventListener('click', () => {
-      document.getElementById('modal-contrato').textContent        = card.dataset.nome;
-      document.getElementById('modal-nome').textContent        = card.dataset.nome;
-      document.getElementById('modal-cpe').textContent         = card.dataset.cpe;
-      document.getElementById('modal-pe').textContent          = card.dataset.pe;
-      document.getElementById('modal-onu').textContent          = card.dataset.onu;
-      document.getElementById('modal-designador').textContent  = card.dataset.designador;
-      document.getElementById('modal-vlans').textContent       = card.dataset.vlans;
-      document.getElementById('modal-publico').textContent   = card.dataset.publico;
-      document.getElementById('modal-parceiro').textContent    = card.dataset.parceiro;
-      document.getElementById('modal-contato-parceiro').textContent = card.dataset.contato_parceiro ?? "-";
-      document.getElementById('modal-porta').textContent       = card.dataset.porta;
-      document.getElementById('modal-sw-acesso').textContent       = card.dataset.sw_acesso;
-      document.getElementById('modal-bairro').textContent      = card.dataset.bairro;
-      document.getElementById('modal-uf').textContent          = card.dataset.uf;
-      document.getElementById('modal-avenida').textContent     = card.dataset.avenida;
-      document.getElementById('modal-complemento').textContent = card.dataset.complemento;
-      document.getElementById('modal-cidade').textContent      = card.dataset.cidade;
+      document.getElementById('modal-contrato').textContent = card.dataset.contrato;
+document.getElementById('modal-nome').textContent = card.dataset.nome;
+document.getElementById('modal-cpe').textContent = card.dataset.cpe;
+document.getElementById('modal-pe').textContent = card.dataset.pe;
+document.getElementById('modal-onu').textContent = card.dataset.onu;
+document.getElementById('modal-designador').textContent = card.dataset.designador;
+document.getElementById('modal-vlans').textContent = card.dataset.vlans;
+document.getElementById('modal-publico').textContent = card.dataset.publico;
+document.getElementById('modal-parceiro').textContent = card.dataset.parceiro;
+document.getElementById('modal-contato-parceiro').textContent = card.dataset.contato_parceiro;
+document.getElementById('modal-porta').textContent = card.dataset.porta;
+document.getElementById('modal-sw-acesso').textContent = card.dataset.sw_acesso;
+document.getElementById('modal-bairro').textContent = card.dataset.bairro;
+document.getElementById('modal-uf').textContent = card.dataset.uf;
+document.getElementById('modal-avenida').textContent = card.dataset.avenida;
+document.getElementById('modal-complemento').textContent = card.dataset.complemento;
+document.getElementById('modal-cidade').textContent = card.dataset.cidade;
+document.getElementById('modal-steps').textContent = card.dataset.steps;
 
-      // Mostra os passos com quebras de linha
-      document.getElementById('modal-steps').textContent       = card.dataset.steps;
+
+
 
       // Link PRTG clicável
       const prtg = card.dataset.prtg;

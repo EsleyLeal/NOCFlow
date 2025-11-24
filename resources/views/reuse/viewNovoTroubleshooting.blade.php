@@ -47,10 +47,11 @@
       </div>
 
       <div class="col-lg-4">
-        <label class="form-label">CPE</label>
-        <input type="text" name="cpe" class="form-control" placeholder="Gerência do cliente"
-          value="{{ old('cpe', $ts->cpe ?? '') }}">
-      </div>
+  <label class="form-label">CPE</label>
+  <input type="text" name="cpe" class="form-control" placeholder="Gerência do cliente"
+    value="{{ old('cpe', $ts->IP ?? '') }}">
+</div>
+
 
       <div class="col-lg-4">
         <label class="form-label">PE</label>

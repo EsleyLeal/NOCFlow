@@ -28,48 +28,49 @@
 
       <div class="tab-content">
 
-        <!-- ============================================================= -->
+        <!-- ======================= -->
         <!-- DADOS INICIAIS -->
-        <!-- ============================================================= -->
+        <!-- ======================= -->
         <div class="tab-pane fade show active" id="edit-inicial">
           <div class="row g-3">
 
             <div class="col-lg-4">
               <label class="form-label">Contrato</label>
-              <input type="text" name="contrato" class="form-control" value="{{ $ts->contrato }}">
+              <input type="text" name="contrato" class="form-control" value="{{ $ts->CONTRATO_NOVO }}">
             </div>
 
             <div class="col-lg-4">
               <label class="form-label">Nome</label>
-              <input type="text" name="nome" class="form-control" value="{{ $ts->nome }}">
+              <input type="text" name="nome" class="form-control" value="{{ $ts->NOME }}">
             </div>
 
             <div class="col-lg-4">
-              <label class="form-label">CPE</label>
-              <input type="text" name="cpe" class="form-control" value="{{ $ts->cpe }}">
+              <label class="form-label">CPE (IP)</label>
+              <input type="text" name="cpe" class="form-control" value="{{ $ts->IP }}">
+
             </div>
 
             <div class="col-lg-4">
               <label class="form-label">PE</label>
-              <input type="text" name="pe" class="form-control" value="{{ $ts->pe }}">
+              <input type="text" name="pe" class="form-control" value="{{ $ts->PE_RELACIONADO }}">
             </div>
 
             <div class="col-lg-4">
               <label class="form-label">VLANS</label>
-              <input type="text" name="vlans" class="form-control" value="{{ $ts->vlans }}">
+              <input type="text" name="vlans" class="form-control" value="{{ $ts->VLAN_GER }}">
             </div>
 
             <!-- DESIGNADOR -->
             <div class="col-12 mt-3">
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox"
-                       {{ $ts->designador ? 'checked' : '' }}
+                       {{ $ts->DESIGNADOR ? 'checked' : '' }}
                        onclick="document.getElementById('editWrapperDesignador').classList.toggle('d-none')">
                 <label class="form-check-label">DESIGNADOR</label>
               </div>
 
-              <div id="editWrapperDesignador" class="mt-2 {{ $ts->designador ? '' : 'd-none' }}">
-                <input type="text" name="designador" class="form-control" value="{{ $ts->designador }}">
+              <div id="editWrapperDesignador" class="mt-2 {{ $ts->DESIGNADOR ? '' : 'd-none' }}">
+                <input type="text" name="designador" class="form-control" value="{{ $ts->DESIGNADOR }}">
               </div>
             </div>
 
@@ -77,13 +78,13 @@
             <div class="col-12 mt-3">
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox"
-                       {{ $ts->onu ? 'checked' : '' }}
+                       {{ $ts->ONU ? 'checked' : '' }}
                        onclick="document.getElementById('editOnu').classList.toggle('d-none')">
                 <label class="form-check-label">ONU</label>
               </div>
 
-              <div id="editOnu" class="mt-2 {{ $ts->onu ? '' : 'd-none' }}">
-                <input type="text" name="onu" class="form-control" value="{{ $ts->onu }}">
+              <div id="editOnu" class="mt-2 {{ $ts->ONU ? '' : 'd-none' }}">
+                <input type="text" name="onu" class="form-control" value="{{ $ts->ONU }}">
               </div>
             </div>
 
@@ -91,126 +92,127 @@
             <div class="col-12 mt-3">
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox"
-                       {{ $ts->prtg ? 'checked' : '' }}
+                       {{ $ts->LINK_PRTG ? 'checked' : '' }}
                        onclick="document.getElementById('editPrtg').classList.toggle('d-none')">
                 <label class="form-check-label">PRTG (Link)</label>
               </div>
 
               <input type="text" name="prtg" id="editPrtg"
-                     class="form-control mt-2 {{ $ts->prtg ? '' : 'd-none' }}"
-                     value="{{ $ts->prtg }}">
+                     class="form-control mt-2 {{ $ts->LINK_PRTG ? '' : 'd-none' }}"
+                     value="{{ $ts->LINK_PRTG }}">
             </div>
 
             <!-- PARCEIRO -->
             <div class="col-12 mt-3">
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox"
-                       {{ ($ts->parceiro || $ts->contato_parceiro) ? 'checked' : '' }}
+                       {{ ($ts->PARCEIRO || $ts->CONTATO_PARCEIRO) ? 'checked' : '' }}
                        onclick="document.getElementById('editParceiro').classList.toggle('d-none')">
                 <label class="form-check-label">Parceiro</label>
               </div>
 
-              <div id="editParceiro" class="mt-2 {{ ($ts->parceiro || $ts->contato_parceiro) ? '' : 'd-none' }}">
+              <div id="editParceiro" class="mt-2 {{ ($ts->PARCEIRO || $ts->CONTATO_PARCEIRO) ? '' : 'd-none' }}">
                 <div class="row g-2">
                   <div class="col-lg-6">
-                    <input type="text" name="parceiro" class="form-control" value="{{ $ts->parceiro }}">
+                    <input type="text" name="parceiro" class="form-control" value="{{ $ts->PARCEIRO }}">
                   </div>
                   <div class="col-lg-6">
-                    <input type="text" name="contato_parceiro" class="form-control" value="{{ $ts->contato_parceiro }}">
+                    <input type="text" name="contato_parceiro" class="form-control" value="{{ $ts->CONTATO_PARCEIRO }}">
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- PORTA -->
-            <div class="col-12 mt-3">
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox"
-                       {{ $ts->porta ? 'checked' : '' }}
-                       onclick="document.getElementById('editPorta').classList.toggle('d-none')">
-                <label class="form-check-label">Porta</label>
-              </div>
+            <!-- PORTA (CIRCUITO) -->
+           <div class="col-12 mt-3">
+  <div class="form-check form-switch">
+    <input class="form-check-input" type="checkbox"
+           {{ $ts->PORTA ? 'checked' : '' }}
+           onclick="document.getElementById('editPorta').classList.toggle('d-none')">
+    <label class="form-check-label">Porta</label>
+  </div>
 
-              <input type="text" id="editPorta" name="porta"
-                     class="form-control mt-2 {{ $ts->porta ? '' : 'd-none' }}"
-                     value="{{ $ts->porta }}">
-            </div>
+  <input type="text" id="editPorta" name="porta"
+         class="form-control mt-2 {{ $ts->PORTA ? '' : 'd-none' }}"
+         value="{{ $ts->PORTA }}">
+</div>
+
 
             <!-- SW ACESSO -->
             <div class="col-12 mt-3">
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox"
-                       {{ $ts->sw_acesso ? 'checked' : '' }}
+                       {{ $ts->SW_RELACIONADO ? 'checked' : '' }}
                        onclick="document.getElementById('editSw').classList.toggle('d-none')">
                 <label class="form-check-label">SW de Acesso</label>
               </div>
 
               <input type="text" id="editSw" name="sw_acesso"
-                     class="form-control mt-2 {{ $ts->sw_acesso ? '' : 'd-none' }}"
-                     value="{{ $ts->sw_acesso }}">
+                     class="form-control mt-2 {{ $ts->SW_RELACIONADO ? '' : 'd-none' }}"
+                     value="{{ $ts->SW_RELACIONADO }}">
             </div>
 
-            <!-- IP PUBLICO -->
+            <!-- IP PUBLICO / IP -->
             <div class="col-12 mt-3 mb-4">
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox"
-                       {{ $ts->publico ? 'checked' : '' }}
+                       {{ $ts->IP ? 'checked' : '' }}
                        onclick="document.getElementById('editPublico').classList.toggle('d-none')">
                 <label class="form-check-label">IP Público</label>
               </div>
 
               <input type="text" id="editPublico" name="publico"
-                     class="form-control mt-2 {{ $ts->publico ? '' : 'd-none' }}"
-                     value="{{ $ts->publico }}">
+                     class="form-control mt-2 {{ $ts->IP ? '' : 'd-none' }}"
+                     value="{{ $ts->IP }}">
             </div>
 
           </div>
         </div>
 
-        <!-- ============================================================= -->
+        <!-- ======================= -->
         <!-- ENDEREÇO -->
-        <!-- ============================================================= -->
+        <!-- ======================= -->
         <div class="tab-pane fade" id="edit-endereco">
           <div class="row g-3">
 
             <div class="col-lg-6">
               <label class="form-label">Avenida</label>
-              <input type="text" name="avenida" class="form-control" value="{{ $ts->avenida }}">
+              <input type="text" name="avenida" class="form-control" value="{{ $ts->ENDERECO_NOVO }}">
             </div>
 
             <div class="col-lg-6">
               <label class="form-label">Bairro</label>
-              <input type="text" name="bairro" class="form-control" value="{{ $ts->bairro }}">
+              <input type="text" name="bairro" class="form-control" value="{{ $ts->ENDERECO_BAIRRO }}">
             </div>
 
             <div class="col-lg-6">
               <label class="form-label">Complemento</label>
-              <input type="text" name="complemento" class="form-control" value="{{ $ts->complemento }}">
+              <input type="text" name="complemento" class="form-control" value="{{ $ts->ENDERECO_COMPLEMENTO }}">
             </div>
 
             <div class="col-lg-3">
               <label class="form-label">UF</label>
               <select name="uf" class="form-select">
                 @foreach(['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'] as $uf)
-                  <option value="{{ $uf }}" {{ $ts->uf === $uf ? 'selected' : '' }}>{{ $uf }}</option>
+                  <option value="{{ $uf }}" {{ $ts->ENDERECO_UF === $uf ? 'selected' : '' }}>{{ $uf }}</option>
                 @endforeach
               </select>
             </div>
 
             <div class="col-lg-3">
               <label class="form-label">Cidade</label>
-              <input type="text" name="cidade" class="form-control" value="{{ $ts->cidade }}">
+              <input type="text" name="cidade" class="form-control" value="{{ $ts->ENDERECO_CIDADE }}">
             </div>
 
           </div>
         </div>
 
-        <!-- ============================================================= -->
+        <!-- ======================= -->
         <!-- MAIS INFORMAÇÕES -->
-        <!-- ============================================================= -->
+        <!-- ======================= -->
         <div class="tab-pane fade" id="edit-mais">
           <label class="form-label">Mais Informações</label>
-          <textarea name="steps" class="form-control" rows="6">{{ $ts->steps }}</textarea>
+          <textarea name="steps" class="form-control" rows="6">{{ $ts->STEPS }}</textarea>
         </div>
 
       </div>

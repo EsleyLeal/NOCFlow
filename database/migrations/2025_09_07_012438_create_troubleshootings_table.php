@@ -9,43 +9,78 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+     public function up(): void
     {
         Schema::create('troubleshootings', function (Blueprint $table) {
             $table->id();
 
-            // Relacionamento com o usuário que criou
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            // Usuário que editou por último
+            $table->foreignId('LAST_EDIT_USER')->constrained('users')->onDelete('cascade');
 
-            // Campos principais
+            // Campos principais do banco dele
+            $table->string('CONTRATO_NOVO')->nullable();
+            $table->string('NOME')->nullable();
+            $table->string('IP')->nullable();
+            $table->string('PE_RELACIONADO')->nullable();
+            $table->string('SW_RELACIONADO')->nullable();
+            $table->string('VLAN_GER')->nullable();
+            $table->string('VLAN_TRANS')->nullable();
+            $table->string('DESIGNADOR')->nullable();
+            $table->string('PORTA')->nullable();
+            $table->string('CIRCUITO')->nullable();
+            $table->string('ONU')->nullable();
+            $table->string('LINK_PRTG')->nullable();
+            $table->string('PARCEIRO')->nullable();
+            $table->string('CONTATO_PARCEIRO')->nullable();
 
-            $table->string('contrato')->nullable();
-            $table->string('nome')->nullable();       // SIGLA
-            $table->string('cpe')->nullable();       // cpe
-            $table->string('pe')->nullable(); // Tipo de troubleshooting
-            $table->string('vlans')->nullable();
-            $table->string('designador')->nullable();       // Breve descrição
-            $table->string('onu')->nullable();
-            $table->string('prtg')->nullable();
-            $table->string('parceiro')->nullable();
-            $table->string('contato_parceiro')->nullable();
-            $table->string('porta')->nullable();   // Governo, Matriz, Corporativo
-            $table->string('sw_acesso')->nullable();
-            $table->string('publico')->nullable();
-            $table->string('avenida')->nullable();
-            $table->string('bairro')->nullable();
-            $table->string('complemento')->nullable();
-            $table->string('uf', 2)->nullable();   // Ex: CE, SP, RJ
-            $table->string('cidade')->nullable();
+            // Campos adicionais
+            $table->timestamp('LAST_EDIT_TIME')->nullable();
+            $table->string('SNMP')->nullable();
+            $table->string('ICMP')->nullable();
 
+            $table->boolean('COMPLETO')->nullable();
+            $table->boolean('RELATORIO')->nullable();
+            $table->boolean('MAPA')->nullable();
 
+            $table->string('CATEGORIA')->nullable();
+            $table->string('GRUPO')->nullable();
 
-            // Dinâmicos e passos
-            $table->json('details')->nullable();  // JSON dos detalhes adicionais
-            $table->text('steps')->nullable();    // Passos
+            $table->text('NOTAS')->nullable();
+
+            $table->string('CONTRATO_ANTIGO')->nullable();
+            $table->string('COMUNIDADE_SNMP')->nullable();
+
+            $table->string('FABRICANTE')->nullable();
+            $table->string('FABRICANTE_INFO')->nullable();
+
+            $table->string('CODIGO_CLIENTE')->nullable();
+
+            $table->string('ENDERECO_ANTIGO')->nullable();
+            $table->string('ENDERECO_NOVO')->nullable();
+            $table->string('ENDERECO_NUM')->nullable();
+            $table->string('ENDERECO_BAIRRO')->nullable();
+            $table->string('ENDERECO_COMPLEMENTO')->nullable();
+            $table->string('ENDERECO_CIDADE')->nullable();
+            $table->string('ENDERECO_UF', 2)->nullable();
+            $table->string('CEP')->nullable();
+
+            $table->string('VENDEDOR')->nullable();
+
+            $table->string('COD_PLANO')->nullable();
+            $table->string('PLANO')->nullable();
+
+            $table->date('ASSINATURA_DO_CONTRATO')->nullable();
+            $table->date('INICIO_DO_CONTRATO')->nullable();
+
+            $table->decimal('VALOR_DESCONTO', 10, 2)->nullable();
+            $table->decimal('VALOR_TOTAL', 10, 2)->nullable();
+            $table->decimal('TOTAL_PROMO', 10, 2)->nullable();
+
+            // Campos do seu modelo anterior (opcional manter)
+            $table->json('DETAILS')->nullable();
+            $table->text('STEPS')->nullable();
 
             $table->timestamps();
-
         });
     }
 
