@@ -90,7 +90,7 @@ class TroubleshootingController extends Controller
             'ENDERECO_CIDADE'      => $data['cidade'] ?? null,
             'STEPS'                => $data['steps'] ?? null,
             'DETAILS'              => !empty($data['details']) ? json_encode($data['details'], JSON_UNESCAPED_UNICODE) : null,
-            'LAST_EDIT_USER'       => auth()->id(),
+            'LAST_EDIT_USER_ID'       => auth()->id(),
         ];
 
         Troubleshooting::create($mapped);
@@ -102,7 +102,7 @@ class TroubleshootingController extends Controller
     {
         $user = auth()->user();
 
-        if (!($user->isAdmin() || $user->id === $troubleshooting->LAST_EDIT_USER)) {
+        if (!($user->isAdmin() || $user->id === $troubleshooting->LAST_EDIT_USER_ID)) {
             return response()->json(['error' => 'Não autorizado'], 403);
         }
 
@@ -137,7 +137,7 @@ class TroubleshootingController extends Controller
             'DETAILS'              => isset($input['details'])
                                         ? json_encode($input['details'], JSON_UNESCAPED_UNICODE)
                                         : $troubleshooting->DETAILS,
-            'LAST_EDIT_USER'       => auth()->id(),
+            'LAST_EDIT_USER_ID'       => auth()->id(),
             'LAST_EDIT_TIME'       => now(),
         ];
 
@@ -151,7 +151,7 @@ class TroubleshootingController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->isAdmin() || $troubleshooting->LAST_EDIT_USER === $user->id) {
+        if ($user->isAdmin() || $troubleshooting->LAST_EDIT_USER_ID === $user->id) {
             $troubleshooting->delete();
             return response()->json(['success' => true], 200);
         }
